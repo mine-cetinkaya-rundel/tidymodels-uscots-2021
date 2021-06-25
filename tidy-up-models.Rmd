@@ -1,0 +1,123 @@
+---
+title: "Welcome!"
+subtitle: "<br><br> Tidy up your models"
+author: "[datasciencebox.org](https://datasciencebox.org/)"
+date: "Mine Çetinkaya-Rundel and Debbie Yuster"
+output:
+  xaringan::moon_reader:
+    css: ["xaringan-themer.css", "slides.css"]
+    lib_dir: libs
+    nature:
+      ratio: "16:9"
+      highlightLines: true
+      highlightStyle: solarized-light
+      countIncrementalSlides: false
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  fig.width = 8, 
+  fig.asp = 0.618,
+  out.width = "60%",
+  fig.align = "center",
+  dpi = 300
+  )
+
+ggplot2::theme_set(ggplot2::theme_minimal(base_size = 16))
+
+library(xaringanExtra)
+xaringanExtra::use_panelset()
+```
+
+layout: true
+  
+<div class="my-footer">
+<span>
+<a href="https://datasciencebox.org" target="_blank">INSERT LINK</a>
+</span>
+</div> 
+
+---
+
+```{r packages, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(emo)
+```
+
+## Welcome
+
+- Introductions...
+- Useful links
+
+TO DO: Need to update hex for logo for workshop...
+
+---
+
+class: middle
+
+# High level view: tidymodels
+
+---
+
+## With basic model fit (lm) alone, no advantage
+
+Not necessarily better way to do any linear model, better as a framework in general
+
+---
+
+## 	Syntax side by side, tidymodels more complicated -- debbie
+
+---
+
+## Preprocess training and testing data together, recipes as a big picture
+
+---
+
+## Split into training/testing first
+
+---
+
+class: middle
+
+# Case study 1: Linear, simple...
+
+---
+
+MLR example without recipes
+
+- fit model
+- prediction
+- breakout room: 10 min
+		
+---
+
+class: middle
+
+# Case study 2: Logistic, more complex...
+
+---
+
+cross validation, autoplot
+
+---
+
+class: middle
+
+# Wrap up
+
+---
+
+## What about inference?
+
+---
+
+## Resources from dsbox
+
+---
+
+class: center, middle
+
+.hand[thank you!]
+
+TO DO: ADD LINKS AGAIN
+
