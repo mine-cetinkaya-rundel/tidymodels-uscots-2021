@@ -14,7 +14,7 @@ The intended audience for the session is anyone who is interested in an introduc
 
 ## Instructors
 
-<img src="images/mine.png" align = "right" width = "2 00px">
+<img src="images/mine.png" align = "right" width = "200px">
 
 [**Mine Çetinkaya-Rundel**](http://mine-cr.com/) (Duke University, RStudio) is Professor of the Practice position at the Department of Statistical Science at Duke University and Data Scientist and Professional Educator at RStudio. Mine’s work focuses on innovation in statistics and data science pedagogy, with an emphasis on computing, reproducible research, student-centered learning, and open-source education as well as pedagogical approaches for enhancing retention of women and under-represented minorities in STEM. Mine works on integrating computation into the undergraduate statistics curriculum, using reproducible research methodologies and analysis of real and complex datasets. She also organizes ASA DataFest, an annual two-day competition in which teams of undergraduate students work to reveal insights into a rich and complex dataset. Mine has been working on the OpenIntro project since its founding and as part of this project she co-authored four open-source introductory statistics textbooks (including this one!). She is also the creator and maintainer of datasciencebox.org and she teaches the popular Statistics with R MOOC on Coursera.
 
