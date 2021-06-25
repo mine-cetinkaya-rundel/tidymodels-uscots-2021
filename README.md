@@ -8,6 +8,8 @@ The intended audience for the session is anyone who is interested in an introduc
 
 ## Agenda
 
+TO DO: Link to relevant bits in the slide deck
+
 - Welcome & Introduction to tidymodels
 - Case studies
 - Wrap-up
