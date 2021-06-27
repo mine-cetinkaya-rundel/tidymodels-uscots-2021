@@ -42,6 +42,8 @@ layout: true
 ```{r packages, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(emo)
+library(tidymodels)
+
 ```
 
 ## Welcome
@@ -65,7 +67,229 @@ Not necessarily better way to do any linear model, better as a framework in gene
 
 ---
 
-## 	Syntax side by side, tidymodels more complicated -- debbie
+class: middle
+
+# Linear regression done two ways
+
+---
+
+## Paris Paintings
+### Meet the data curators
+
+.center[
+![](images/sandra-van-ginhoven.png) ![](images/hilary-coe-cronheim.png)
+
+Sandra van Ginhoven &nbsp; &nbsp; Hilary Coe Cronheim
+
+PhD students in the Duke Art, Law, and Markets Initiative in 2013
+]
+
+- Source: Printed catalogs of 28 auction sales in Paris, 1764 - 1780
+- 3,393 paintings, their prices, and descriptive details from sales catalogs - over 60 variables
+---
+
+## Depart pour la chasse
+
+```{r out.width="75%", echo=FALSE}
+knitr::include_graphics("images/depart-pour-la-chasse.png")
+```
+
+---
+
+## Auction catalog text
+
+.pull-left[
+```{r out.width="70%", echo=FALSE}
+knitr::include_graphics("images/auction-catalogue.png")
+```
+]
+.pull-right[
+.small[
+Two paintings very rich in composition, of a beautiful execution, and whose merit is very remarkable, each 17 inches 3 lines high, 23 inches wide; the first, painted on wood, comes from the Cabinet of Madame la Comtesse de Verrue; it represents a departure for the hunt: it shows in the front a child on a white horse, a man who gives the horn to gather the dogs, a falconer and other figures nicely distributed across the width of the painting; two horses drinking from a fountain; on the right in the corner a lovely country house topped by a terrace, on which people are at the table, others who play instruments; trees and fabriques pleasantly enrich the background.
+]
+]
+
+---
+
+```{r out.width="80%", echo=FALSE}
+knitr::include_graphics("images/painting1.png")
+knitr::include_graphics("images/painting2.png")
+knitr::include_graphics("images/painting3.png")
+```
+
+---
+
+## Linear regression with the Paris Paintings dataset
+
+```{r load-pp, message=FALSE}
+pp <- read_csv(
+  "data/paris-paintings.csv", 
+  na = c("n/a", "", "NA")
+  )
+```
+
+--
+
+### Predicting height from width: Base R syntax
+
+
+```{r}
+base_r_ht_wt <- lm(Height_in ~ Width_in, data = pp)
+tidy(base_r_ht_wt)
+```
+
+
+$$\widehat{Height_{in}} = 3.62 + 0.78~Width_{in}$$
+---
+
+```{r out.width="98%", echo=FALSE}
+knitr::include_graphics("images/tidymodels.png")
+```
+
+---
+
+# Rewind and redo, with tidymodels
+## Step 1: Specify model
+
+```{r}
+linear_reg()
+```
+
+---
+
+## Step 2: Set model fitting *engine*
+
+```{r}
+linear_reg() %>%
+  set_engine("lm") # lm: linear model
+```
+
+---
+
+## Step 3: Fit model & estimate parameters
+
+... using **formula syntax**
+
+```{r fit-model}
+linear_reg() %>%
+  set_engine("lm") %>%
+  fit(Height_in ~ Width_in, data = pp)
+```
+
+---
+
+## A closer look at model output
+
+```{r ref.label="fit-model", echo=FALSE}
+```
+
+.large[
+$$\widehat{Height\_{in}} = 3.6214 + 0.7808 \times Width\_{in}$$
+]
+
+---
+
+## A tidy look at model output
+
+```{r}
+linear_reg() %>%
+  set_engine("lm") %>%
+  fit(Height_in ~ Width_in, data = pp) %>%
+  tidy()
+```
+
+.large[
+$$\widehat{height\_{in}} = 3.62 + 0.781 \times width\_{in}$$
+]
+
+---
+
+## Side-by-side comparison: Fitting the linear model
+
+.pull-left[
+.midi[
+Base R:
+```{r lm-syntax, eval = FALSE}
+lm(Height_in ~ Width_in, data = pp) %>%
+  tidy()
+```
+]]
+
+.pull-right[
+.midi[
+tidymodels:
+```{r, eval = FALSE}
+linear_reg() %>%
+  set_engine("lm") %>%
+  fit(Height_in ~ Width_in, data = pp) %>%
+  tidy()
+```
+]]
+
+```{r lm-syntax, echo = FALSE, eval = TRUE}
+```
+
+---
+
+## Tidy regression output
+
+Achieved with functions from the `broom` package:
+
+- `tidy`: Constructs a data frame that summarizes the model's statistical findings: coefficient estimates, *standard errors, test statistics, p-values*.
+- `glance`: Constructs a concise one-row summary of the model. This typically contains values such as $R^2$, adjusted $R^2$, *and residual standard errors that are computed once for the entire model*.
+- `augment`: Adds columns to the original data that was modeled. This includes predictions and residuals.
+
+---
+
+## Side-by-side comparison: Using augment()
+
+.pull-left[
+.small[
+Base R model + augment():
+```{r aug-syntax, eval = FALSE}
+base_r_ht_wt <- lm(Height_in ~ Width_in, data = pp)
+base_r_ht_wt_aug <- augment(base_r_ht_wt)
+base_r_ht_wt_aug
+```
+]]
+
+.pull-right[
+.small[
+tidymodels model + augment():
+```{r tidy-aug, eval = FALSE}
+tidy_ht_wt <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(Height_in ~ Width_in, data = pp)
+tidy_ht_wt_aug <- augment(tidy_ht_wt$fit)
+tidy_ht_wt_aug
+```
+]]
+
+```{r aug-syntax, echo = FALSE, eval = TRUE}
+```
+
+```{r tidy-aug, echo = FALSE, eval = TRUE}
+```
+
+---
+
+## Comparison: glance() uses the same syntax
+
+.pull-left[
+.small[
+Base R model + glance():
+```{r glance-syntax, eval = TRUE}
+glance(base_r_ht_wt)$r.squared
+```
+]]
+
+.pull-right[
+.small[
+tidymodels model + glance():
+```{r, eval = TRUE}
+glance(tidy_ht_wt)$r.squared
+```
+]]
 
 ---
 

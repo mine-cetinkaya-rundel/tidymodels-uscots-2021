@@ -4,9 +4,9 @@
     <title>Welcome!</title>
     <meta charset="utf-8" />
     <meta name="author" content="datasciencebox.org" />
-    <script src="libs/header-attrs/header-attrs.js"></script>
-    <link href="libs/panelset/panelset.css" rel="stylesheet" />
-    <script src="libs/panelset/panelset.js"></script>
+    <script src="libs/header-attrs-2.9/header-attrs.js"></script>
+    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.2.6/panelset.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
     <link rel="stylesheet" href="slides.css" type="text/css" />
   </head>
@@ -57,7 +57,325 @@ Not necessarily better way to do any linear model, better as a framework in gene
 
 ---
 
-## 	Syntax side by side, tidymodels more complicated -- debbie
+class: middle
+
+# Linear regression done two ways
+
+---
+
+## Paris Paintings
+### Meet the data curators
+
+.center[
+![](images/sandra-van-ginhoven.png) ![](images/hilary-coe-cronheim.png)
+
+Sandra van Ginhoven &amp;nbsp; &amp;nbsp; Hilary Coe Cronheim
+
+PhD students in the Duke Art, Law, and Markets Initiative in 2013
+]
+
+- Source: Printed catalogs of 28 auction sales in Paris, 1764 - 1780
+- 3,393 paintings, their prices, and descriptive details from sales catalogs - over 60 variables
+---
+
+## Depart pour la chasse
+
+&lt;img src="images/depart-pour-la-chasse.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Auction catalog text
+
+.pull-left[
+&lt;img src="images/auction-catalogue.png" width="70%" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+.small[
+Two paintings very rich in composition, of a beautiful execution, and whose merit is very remarkable, each 17 inches 3 lines high, 23 inches wide; the first, painted on wood, comes from the Cabinet of Madame la Comtesse de Verrue; it represents a departure for the hunt: it shows in the front a child on a white horse, a man who gives the horn to gather the dogs, a falconer and other figures nicely distributed across the width of the painting; two horses drinking from a fountain; on the right in the corner a lovely country house topped by a terrace, on which people are at the table, others who play instruments; trees and fabriques pleasantly enrich the background.
+]
+]
+
+---
+
+&lt;img src="images/painting1.png" width="80%" style="display: block; margin: auto;" /&gt;&lt;img src="images/painting2.png" width="80%" style="display: block; margin: auto;" /&gt;&lt;img src="images/painting3.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Linear regression with the Paris Paintings dataset
+
+
+```r
+pp &lt;- read_csv(
+  "data/paris-paintings.csv", 
+  na = c("n/a", "", "NA")
+  )
+```
+
+--
+
+### Predicting height from width: Base R syntax
+
+
+
+```r
+base_r_ht_wt &lt;- lm(Height_in ~ Width_in, data = pp)
+tidy(base_r_ht_wt)
+```
+
+```
+## # A tibble: 2 x 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)    3.62    0.254        14.3 8.82e-45
+## 2 Width_in       0.781   0.00950      82.1 0
+```
+
+
+`$$\widehat{Height_{in}} = 3.62 + 0.78~Width_{in}$$`
+---
+
+&lt;img src="images/tidymodels.png" width="98%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Rewind and redo, with tidymodels
+## Step 1: Specify model
+
+
+```r
+linear_reg()
+```
+
+```
+## Linear Regression Model Specification (regression)
+```
+
+---
+
+## Step 2: Set model fitting *engine*
+
+
+```r
+linear_reg() %&gt;%
+  set_engine("lm") # lm: linear model
+```
+
+```
+## Linear Regression Model Specification (regression)
+## 
+## Computational engine: lm
+```
+
+---
+
+## Step 3: Fit model &amp; estimate parameters
+
+... using **formula syntax**
+
+
+```r
+linear_reg() %&gt;%
+  set_engine("lm") %&gt;%
+  fit(Height_in ~ Width_in, data = pp)
+```
+
+```
+## parsnip model object
+## 
+## Fit time:  3ms 
+## 
+## Call:
+## stats::lm(formula = Height_in ~ Width_in, data = data)
+## 
+## Coefficients:
+## (Intercept)     Width_in  
+##      3.6214       0.7808
+```
+
+---
+
+## A closer look at model output
+
+
+```
+## parsnip model object
+## 
+## Fit time:  1ms 
+## 
+## Call:
+## stats::lm(formula = Height_in ~ Width_in, data = data)
+## 
+## Coefficients:
+## (Intercept)     Width_in  
+##      3.6214       0.7808
+```
+
+.large[
+`$$\widehat{Height\_{in}} = 3.6214 + 0.7808 \times Width\_{in}$$`
+]
+
+---
+
+## A tidy look at model output
+
+
+```r
+linear_reg() %&gt;%
+  set_engine("lm") %&gt;%
+  fit(Height_in ~ Width_in, data = pp) %&gt;%
+  tidy()
+```
+
+```
+## # A tibble: 2 x 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)    3.62    0.254        14.3 8.82e-45
+## 2 Width_in       0.781   0.00950      82.1 0
+```
+
+.large[
+`$$\widehat{height\_{in}} = 3.62 + 0.781 \times width\_{in}$$`
+]
+
+---
+
+## Side-by-side comparison: Fitting the linear model
+
+.pull-left[
+.midi[
+Base R:
+
+```r
+lm(Height_in ~ Width_in, data = pp) %&gt;%
+  tidy()
+```
+]]
+
+.pull-right[
+.midi[
+tidymodels:
+
+```r
+linear_reg() %&gt;%
+  set_engine("lm") %&gt;%
+  fit(Height_in ~ Width_in, data = pp) %&gt;%
+  tidy()
+```
+]]
+
+
+```
+## # A tibble: 2 x 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)    3.62    0.254        14.3 8.82e-45
+## 2 Width_in       0.781   0.00950      82.1 0
+```
+
+---
+
+## Tidy regression output
+
+Achieved with functions from the `broom` package:
+
+- `tidy`: Constructs a data frame that summarizes the model's statistical findings: coefficient estimates, *standard errors, test statistics, p-values*.
+- `glance`: Constructs a concise one-row summary of the model. This typically contains values such as `\(R^2\)`, adjusted `\(R^2\)`, *and residual standard errors that are computed once for the entire model*.
+- `augment`: Adds columns to the original data that was modeled. This includes predictions and residuals.
+
+---
+
+## Side-by-side comparison: Using augment()
+
+.pull-left[
+.small[
+Base R model + augment():
+
+```r
+base_r_ht_wt &lt;- lm(Height_in ~ Width_in, data = pp)
+base_r_ht_wt_aug &lt;- augment(base_r_ht_wt)
+base_r_ht_wt_aug
+```
+]]
+
+.pull-right[
+.small[
+tidymodels model + augment():
+
+```r
+tidy_ht_wt &lt;- linear_reg() %&gt;%
+  set_engine("lm") %&gt;%
+  fit(Height_in ~ Width_in, data = pp)
+tidy_ht_wt_aug &lt;- augment(tidy_ht_wt$fit)
+tidy_ht_wt_aug
+```
+]]
+
+
+```
+## # A tibble: 3,135 x 9
+##    .rownames Height_in Width_in .fitted  .resid     .hat .sigma      .cooksd .std.resid
+##    &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;        &lt;dbl&gt;      &lt;dbl&gt;
+##  1 1                37     29.5   26.7  10.3    0.000399   8.30 0.000310         1.25  
+##  2 2                18     14     14.6   3.45   0.000396   8.31 0.0000342        0.415 
+##  3 3                13     16     16.1  -3.11   0.000361   8.31 0.0000254       -0.375 
+##  4 4                14     18     17.7  -3.68   0.000337   8.31 0.0000330       -0.443 
+##  5 5                14     18     17.7  -3.68   0.000337   8.31 0.0000330       -0.443 
+##  6 6                 7     10     11.4  -4.43   0.000498   8.31 0.0000709       -0.534 
+##  7 7                 6     13     13.8  -7.77   0.000418   8.30 0.000183        -0.936 
+##  8 8                 6     13     13.8  -7.77   0.000418   8.30 0.000183        -0.936 
+##  9 9                15     15     15.3  -0.333  0.000377   8.31 0.000000304     -0.0401
+## 10 10                9      7      9.09 -0.0870 0.000601   8.31 0.0000000330    -0.0105
+## # … with 3,125 more rows
+```
+
+
+```
+## # A tibble: 3,135 x 9
+##    .rownames Height_in Width_in .fitted  .resid     .hat .sigma      .cooksd .std.resid
+##    &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;        &lt;dbl&gt;      &lt;dbl&gt;
+##  1 1                37     29.5   26.7  10.3    0.000399   8.30 0.000310         1.25  
+##  2 2                18     14     14.6   3.45   0.000396   8.31 0.0000342        0.415 
+##  3 3                13     16     16.1  -3.11   0.000361   8.31 0.0000254       -0.375 
+##  4 4                14     18     17.7  -3.68   0.000337   8.31 0.0000330       -0.443 
+##  5 5                14     18     17.7  -3.68   0.000337   8.31 0.0000330       -0.443 
+##  6 6                 7     10     11.4  -4.43   0.000498   8.31 0.0000709       -0.534 
+##  7 7                 6     13     13.8  -7.77   0.000418   8.30 0.000183        -0.936 
+##  8 8                 6     13     13.8  -7.77   0.000418   8.30 0.000183        -0.936 
+##  9 9                15     15     15.3  -0.333  0.000377   8.31 0.000000304     -0.0401
+## 10 10                9      7      9.09 -0.0870 0.000601   8.31 0.0000000330    -0.0105
+## # … with 3,125 more rows
+```
+
+---
+
+## Comparison: glance() uses the same syntax
+
+.pull-left[
+.small[
+Base R model + glance():
+
+```r
+glance(base_r_ht_wt)$r.squared
+```
+
+```
+## [1] 0.6829468
+```
+]]
+
+.pull-right[
+.small[
+tidymodels model + glance():
+
+```r
+glance(tidy_ht_wt)$r.squared
+```
+
+```
+## [1] 0.6829468
+```
+]]
 
 ---
 
