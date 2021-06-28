@@ -635,7 +635,76 @@ class: middle, inverse
 
 class: middle
 
-# Case study 1: Linear, simple...
+# Case study 1: Predicting book weights
+
+.hand[Keeping it simple to begin!]
+
+---
+
+## Data: Book weight and volume
+
+The `allbacks` data frame gives measurements on the volume and weight of 15 books, some of which are paperback and some of which are hardback
+
+.pull-left[
+- Volume - cubic centimetres
+- Area - square centimetres
+- Weight - grams
+]
+.pull-right[
+.small[
+```{r echo=FALSE}
+library(DAAG)
+as_tibble(allbacks) %>%
+  print(n = 15)
+```
+]
+]
+
+.footnote[
+.small[
+These books are from the bookshelf of J. H. Maindonald at Australian National University.
+]
+]
+
+---
+
+## Book weight vs. volume
+
+.pull-left[
+```{r}
+linear_reg() %>%
+  set_engine("lm") %>%
+  fit(weight ~ volume, data = allbacks) %>%
+  tidy()
+```
+]
+.pull-right[
+```{r out.width = "75%", echo = FALSE, fig.align = "right"}
+ggplot(allbacks, aes(x = volume, y = weight)) +
+  geom_point(alpha = 0.7, size = 3)
+```
+]
+
+---
+
+## Book weight vs. volume and cover
+
+.pull-left[
+```{r}
+linear_reg() %>%
+  set_engine("lm") %>%
+  fit(weight ~ volume + cover, data = allbacks) %>%
+  tidy()
+```
+]
+.pull-right[
+```{r out.width = "75%", echo = FALSE, fig.align = "right"}
+ggplot(allbacks, aes(x = volume, y = weight, color = cover, shape = cover)) +
+  geom_point(alpha = 0.7, size = 3) +
+  theme(legend.position = "bottom") +
+  scale_color_manual(values = c("#E48957", "#071381"))
+```
+]
 
 ---
 
