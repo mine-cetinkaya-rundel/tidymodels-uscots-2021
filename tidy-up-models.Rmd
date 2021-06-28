@@ -752,7 +752,7 @@ Would you expect longer or shorter emails to be spam?
 --
 
 .pull-left[
-```{r echo=FALSE, out.width="100%"}
+```{r echo=FALSE, out.width="100%", warning = FALSE}
 library(ggridges)
 email %>%
   ggplot(aes(x = num_char, y = spam, fill = spam, color = spam)) +

@@ -111,39 +111,6 @@ install.packages("tidymodels")
 ```r
 library(tidymodels)
 ```
-
-```
-## Registered S3 method overwritten by 'tune':
-##   method                   from   
-##   required_pkgs.model_spec parsnip
-```
-
-```
-## ── Attaching packages ──────────────── tidymodels 0.1.3 ──
-```
-
-```
-## ✓ broom        0.7.8      ✓ rsample      0.1.0 
-## ✓ dials        0.0.9      ✓ tune         0.1.5 
-## ✓ infer        0.5.4      ✓ workflows    0.2.2 
-## ✓ modeldata    0.1.0      ✓ workflowsets 0.0.2 
-## ✓ parsnip      0.1.6      ✓ yardstick    0.0.8 
-## ✓ recipes      0.1.16
-```
-
-```
-## ── Conflicts ─────────────────── tidymodels_conflicts() ──
-## x recipes::check()   masks devtools::check()
-## x scales::discard()  masks purrr::discard()
-## x dplyr::filter()    masks stats::filter()
-## x recipes::fixed()   masks stringr::fixed()
-## x purrr::is_null()   masks testthat::is_null()
-## x dplyr::lag()       masks stats::lag()
-## x rsample::matches() masks dplyr::matches(), tidyr::matches(), testthat::matches()
-## x yardstick::spec()  masks readr::spec()
-## x recipes::step()    masks stats::step()
-## • Use tidymodels_prefer() to resolve common conflicts.
-```
 ]
 
 ---
@@ -405,7 +372,7 @@ linear_reg() %&gt;%
 ```
 ## parsnip model object
 ## 
-## Fit time:  2ms 
+## Fit time:  3ms 
 ## 
 ## Call:
 ## stats::lm(formula = Height_in ~ Width_in, data = data)
@@ -954,10 +921,6 @@ The `allbacks` data frame gives measurements on the volume and weight of 15 book
 .small[
 
 ```
-## Loading required package: lattice
-```
-
-```
 ## # A tibble: 15 x 4
 ##    volume  area weight cover
 ##     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt;
@@ -1011,7 +974,7 @@ class: middle
 - Open the R Markdown document called `books.Rmd` and follow the instructions
 ]
 
-<div class="countdown" id="timer_60da114a" style="right:0;bottom:0;" data-warnwhen="0">
+<div class="countdown" id="timer_60da15a6" style="right:0;bottom:0;" data-warnwhen="0">
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
 
@@ -1037,38 +1000,6 @@ class: middle
 
 ```r
 library(openintro)
-```
-
-```
-## Loading required package: airports
-```
-
-```
-## Loading required package: cherryblossom
-```
-
-```
-## Loading required package: usdata
-```
-
-```
-## 
-## Attaching package: 'openintro'
-```
-
-```
-## The following objects are masked from 'package:DAAG':
-## 
-##     orings, possum
-```
-
-```
-## The following objects are masked from 'package:lattice':
-## 
-##     ethanol, lsegments
-```
-
-```r
 glimpse(email)
 ```
 
@@ -1117,11 +1048,6 @@ Would you expect longer or shorter emails to be spam?
 --
 
 .pull-left[
-
-```
-## Warning: `guides(&lt;scale&gt; = FALSE)` is deprecated. Please
-## use `guides(&lt;scale&gt; = "none")` instead.
-```
 
 ```
 ## Picking joint bandwidth of 1.18
