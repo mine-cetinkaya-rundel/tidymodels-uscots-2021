@@ -699,7 +699,7 @@ class: middle
 .your-turn[
 **Your turn:** Let's fit a simple multiple linear regression model!
 
-- Go to RStudio Cloud: INSERT LINK
+- Go to RStudio Cloud: [bit.ly/tidymodels-cloud](https://bit.ly/tidymodels-cloud)
 - Join the space and click on **Projects** on top
 - **Start** the project titled **Books**
 - Open the R Markdown document called `books.Rmd` and follow the instructions
@@ -802,6 +802,19 @@ class: middle
 
 .large[
 .hand[then we introduce logistic regression and generalized linear models (GLMs) in general, build a few logistic regression models with one or two predictors, interpret results...]
+]
+
+---
+
+class: middle
+
+.your-turn[
+**Demo:** Let's fit a logistic regression model!
+
+- Go to RStudio Cloud: [bit.ly/tidymodels-cloud](https://bit.ly/tidymodels-cloud)
+- Join the space (if you haven't yet done so) and click on **Projects** on top
+- **Start** the project titled **Spam**
+- Open the R Markdown document called `spam.Rmd` and follow along!
 ]
 
 ---
