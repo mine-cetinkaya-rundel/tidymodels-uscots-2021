@@ -8,7 +8,7 @@ Friday, June 28th, 2021
 
 ### :computer: [Slides](https://mine-cetinkaya-rundel.github.io/tidymodels-uscots-2021/tidy-up-models.html#1)
 ### :cloud: [RStudio Cloud](https://bit.ly/tidymodels-cloud)
-### :pen: [Exercises](ADD LINK) (All of these can be found on RStudio Cloud as well, they're provided here for prticipants choosing to use their local setup) TO DO: UPDATE LINK
+### :pen: [Case studies](https://github.com/mine-cetinkaya-rundel/tidymodels-uscots-2021/tree/main/case-studies) (All of these can be found on RStudio Cloud as well, they're provided here for participants choosing to use their local setup)
 
 ---
 
