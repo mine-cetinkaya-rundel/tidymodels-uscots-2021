@@ -19,12 +19,12 @@ The intended audience for the session is anyone who is interested in an introduc
 
 ## Agenda
 
-TO DO: Link to relevant bits in the slide deck
+TO DO: Confirm links to relevant bits once slides finalized
 
-- Welcome 
-- Hello tidymodels
-- Case studies
-- Wrap-up
+- [Welcome](https://mine-cetinkaya-rundel.github.io/tidymodels-uscots-2021/tidy-up-models.html#1) 
+- [Hello tidymodels](https://mine-cetinkaya-rundel.github.io/tidymodels-uscots-2021/tidy-up-models.html#5)
+- [Case studies](https://mine-cetinkaya-rundel.github.io/tidymodels-uscots-2021/tidy-up-models.html#43)
+- [Wrap-up](https://mine-cetinkaya-rundel.github.io/tidymodels-uscots-2021/tidy-up-models.html#48)
 
 ## Instructors
 
