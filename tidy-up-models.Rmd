@@ -728,7 +728,7 @@ class: middle
 ]
 .pull-right-wide[
 .small[
-```{r}
+```{r message = FALSE}
 library(openintro)
 glimpse(email)
 ```
