@@ -109,39 +109,6 @@ install.packages("tidymodels")
 ```r
 library(tidymodels)
 ```
-
-```
-## Registered S3 method overwritten by 'tune':
-##   method                   from   
-##   required_pkgs.model_spec parsnip
-```
-
-```
-## ── Attaching packages ────────────────── tidymodels 0.1.3 ──
-```
-
-```
-## ✓ broom        0.7.8      ✓ rsample      0.1.0 
-## ✓ dials        0.0.9      ✓ tune         0.1.5 
-## ✓ infer        0.5.4      ✓ workflows    0.2.2 
-## ✓ modeldata    0.1.0      ✓ workflowsets 0.0.2 
-## ✓ parsnip      0.1.6      ✓ yardstick    0.0.8 
-## ✓ recipes      0.1.16
-```
-
-```
-## ── Conflicts ───────────────────── tidymodels_conflicts() ──
-## x recipes::check()   masks devtools::check()
-## x scales::discard()  masks purrr::discard()
-## x dplyr::filter()    masks stats::filter()
-## x recipes::fixed()   masks stringr::fixed()
-## x purrr::is_null()   masks testthat::is_null()
-## x dplyr::lag()       masks stats::lag()
-## x rsample::matches() masks dplyr::matches(), tidyr::matches(), testthat::matches()
-## x yardstick::spec()  masks readr::spec()
-## x recipes::step()    masks stats::step()
-## • Use tidymodels_prefer() to resolve common conflicts.
-```
 ]
 
 ---
@@ -169,6 +136,7 @@ class: middle
 - Source: Printed catalogs of 28 auction sales in Paris, 1764 - 1780
 - 3,393 paintings, their prices, and descriptive details from sales catalogs - over 60 variables
 
+.small[
 
 ```r
 pp &lt;- read_csv("data/paris-paintings.csv", na = c("n/a", "", "NA"))
@@ -186,10 +154,11 @@ pp
 ## 5 L1764-5b L1764 5       0.0820 L       1764 F            
 ## 6 L1764-6  L1764 6       0.0984 L       1764 X            
 ## # … with 3,387 more rows, and 54 more variables:
-## #   origin_cat &lt;chr&gt;, school_pntg &lt;chr&gt;, diff_origin &lt;dbl&gt;,
-## #   logprice &lt;dbl&gt;, price &lt;dbl&gt;, count &lt;dbl&gt;,
+## #   origin_cat &lt;chr&gt;, school_pntg &lt;chr&gt;,
+## #   diff_origin &lt;dbl&gt;, logprice &lt;dbl&gt;, price &lt;dbl&gt;,
 ...
 ```
+]
 
 ---
 
@@ -240,7 +209,7 @@ pp %&gt;%
 ## $ artistliving      &lt;dbl&gt; 0
 ## $ authorstyle       &lt;chr&gt; NA
 ## $ author            &lt;chr&gt; "Philippe Wouwermans"
-## $ winningbidder     &lt;chr&gt; "Langlier, Jacques for Poullain,…
+## $ winningbidder     &lt;chr&gt; "Langlier, Jacques for Poullai…
 ## $ winningbiddertype &lt;chr&gt; "DC"
 ## $ endbuyer          &lt;chr&gt; "C"
 ...
@@ -299,7 +268,7 @@ base_lm &lt;- lm(Height_in ~ Width_in, data = pp)
 
 --
 
-- Summarise:
+- Summarize:
 
 
 ```r
@@ -333,7 +302,7 @@ tidy_lm &lt;- linear_reg() %&gt;%
 
 --
 
-- Summarise:
+- Summarize:
 
 
 ```r
@@ -399,7 +368,7 @@ linear_reg() %&gt;%
 ```
 ## parsnip model object
 ## 
-## Fit time:  2ms 
+## Fit time:  1ms 
 ## 
 ## Call:
 ## stats::lm(formula = Height_in ~ Width_in, data = data)
@@ -411,7 +380,7 @@ linear_reg() %&gt;%
 
 ---
 
-## Step 4: Summarise model output
+## Step 4: Summarize model output
 
 
 ```r
@@ -492,9 +461,9 @@ linear_reg() %&gt;%
 
 ---
 
-## A note on summarising model output
+## A note on summarizing model output
 
-- Models fit with base R can be summarised with `tidy()` as well
+- Models fit with base R can be summarized with `tidy()` as well
 - So you don't have to use the full tidymodels pipeline to benefit from the *tidy* output
 
 .pull-left[
@@ -558,7 +527,7 @@ Achieved with functions from the `broom` package:
 .pull-left[
 Base R fit + `glance()`:
 
-.small[
+.xsmall[
 
 ```r
 glance(base_lm)
@@ -586,7 +555,7 @@ glance(base_lm)$r.squared
 .pull-right[
 Tidymodels fit + `glance()`:
 
-.small[
+.xsmall[
 
 ```r
 glance(tidy_lm)
@@ -618,7 +587,7 @@ glance(tidy_lm)$r.squared
 **They're not exactly the same!**
 
 .pull-left[
-Base R fit + `glance()`:
+Base R fit + `augment()`:
 
 .small[
 
@@ -629,16 +598,16 @@ base_lm_aug
 
 ```
 ## # A tibble: 3,135 x 9
-##   .rownames Height_in Width_in .fitted .resid    .hat .sigma
-##   &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;
-## 1 1                37     29.5    26.7  10.3  3.99e-4   8.30
-## 2 2                18     14      14.6   3.45 3.96e-4   8.31
-## 3 3                13     16      16.1  -3.11 3.61e-4   8.31
-## 4 4                14     18      17.7  -3.68 3.37e-4   8.31
-## 5 5                14     18      17.7  -3.68 3.37e-4   8.31
-## 6 6                 7     10      11.4  -4.43 4.98e-4   8.31
-## # … with 3,129 more rows, and 2 more variables:
-## #   .cooksd &lt;dbl&gt;, .std.resid &lt;dbl&gt;
+##   .rownames Height_in Width_in .fitted .resid     .hat
+##   &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+## 1 1                37     29.5    26.7  10.3  0.000399
+## 2 2                18     14      14.6   3.45 0.000396
+## 3 3                13     16      16.1  -3.11 0.000361
+## 4 4                14     18      17.7  -3.68 0.000337
+## 5 5                14     18      17.7  -3.68 0.000337
+## 6 6                 7     10      11.4  -4.43 0.000498
+## # … with 3,129 more rows, and 3 more variables:
+## #   .sigma &lt;dbl&gt;, .cooksd &lt;dbl&gt;, .std.resid &lt;dbl&gt;
 ```
 ]]
 
@@ -654,16 +623,16 @@ tidy_lm_aug
 
 ```
 ## # A tibble: 3,135 x 9
-##   .rownames Height_in Width_in .fitted .resid    .hat .sigma
-##   &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;
-## 1 1                37     29.5    26.7  10.3  3.99e-4   8.30
-## 2 2                18     14      14.6   3.45 3.96e-4   8.31
-## 3 3                13     16      16.1  -3.11 3.61e-4   8.31
-## 4 4                14     18      17.7  -3.68 3.37e-4   8.31
-## 5 5                14     18      17.7  -3.68 3.37e-4   8.31
-## 6 6                 7     10      11.4  -4.43 4.98e-4   8.31
-## # … with 3,129 more rows, and 2 more variables:
-## #   .cooksd &lt;dbl&gt;, .std.resid &lt;dbl&gt;
+##   .rownames Height_in Width_in .fitted .resid     .hat
+##   &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+## 1 1                37     29.5    26.7  10.3  0.000399
+## 2 2                18     14      14.6   3.45 0.000396
+## 3 3                13     16      16.1  -3.11 0.000361
+## 4 4                14     18      17.7  -3.68 0.000337
+## 5 5                14     18      17.7  -3.68 0.000337
+## 6 6                 7     10      11.4  -4.43 0.000498
+## # … with 3,129 more rows, and 3 more variables:
+## #   .sigma &lt;dbl&gt;, .cooksd &lt;dbl&gt;, .std.resid &lt;dbl&gt;
 ```
 ]]
 
@@ -702,7 +671,7 @@ rf_mod &lt;- rand_forest(trees = 2000)
 
 --
 - Tidymodels pipelines start with splitting data into training and testing sets, and facilitate keeping them separate
-- Tidymodels is opiniated about which functions can be applied to testing data
+- Tidymodels is opioniated about which functions can be applied to testing data
 
 ---
 
@@ -946,10 +915,6 @@ The `allbacks` data frame gives measurements on the volume and weight of 15 book
 ]
 .pull-right[
 .small[
-
-```
-## Loading required package: lattice
-```
 
 ```
 ## # A tibble: 15 x 4
@@ -1281,7 +1246,7 @@ evals %&gt;%
 
 ## Teaching resources
 
-**Data Science in a Box** (datasciencebox.org](https://datasciencebox.org/)) contains slides, application exercises, computing labs, and homework assignments on modelling and inference with tidymodels:
+**Data Science in a Box** ([datasciencebox.org](https://datasciencebox.org/)) contains slides, application exercises, computing labs, and homework assignments on modelling and inference with tidymodels:
 
 .midi[
 - Slides and application exercises:
@@ -1427,6 +1392,13 @@ slideshow._releaseMath(document);
   script.type = 'text/javascript';
   script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
   if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
+e:' && /^https?:/.test(script.src))
     script.src  = script.src.replace(/^https?:/, '');
   document.getElementsByTagName('head')[0].appendChild(script);
 })();

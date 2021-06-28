@@ -178,10 +178,12 @@ class: middle
 - Source: Printed catalogs of 28 auction sales in Paris, 1764 - 1780
 - 3,393 paintings, their prices, and descriptive details from sales catalogs - over 60 variables
 
+.small[
 ```{r load-pp, message = FALSE, output.lines = 12}
 pp <- read_csv("data/paris-paintings.csv", na = c("n/a", "", "NA"))
 pp
 ```
+]
 
 ---
 
@@ -250,7 +252,7 @@ base_lm <- lm(Height_in ~ Width_in, data = pp)
 
 --
 
-- Summarise:
+- Summarize:
 
 ```{r, output.lines = 9:15}
 summary(base_lm)
@@ -270,7 +272,7 @@ tidy_lm <- linear_reg() %>%
 
 --
 
-- Summarise:
+- Summarize:
 
 ```{r}
 tidy(tidy_lm)
@@ -313,7 +315,7 @@ linear_reg() %>%
 
 ---
 
-## Step 4: Summarise model output
+## Step 4: Summarize model output
 
 ```{r summarise-model}
 linear_reg() %>%
@@ -352,9 +354,9 @@ linear_reg() %>%
 
 ---
 
-## A note on summarising model output
+## A note on summarizing model output
 
-- Models fit with base R can be summarised with `tidy()` as well
+- Models fit with base R can be summarized with `tidy()` as well
 - So you don't have to use the full tidymodels pipeline to benefit from the *tidy* output
 
 .pull-left[
@@ -400,7 +402,7 @@ Achieved with functions from the `broom` package:
 .pull-left[
 Base R fit + `glance()`:
 
-.small[
+.xsmall[
 ```{r glance-base}
 glance(base_lm)
 glance(base_lm)$r.squared
@@ -410,7 +412,7 @@ glance(base_lm)$r.squared
 .pull-right[
 Tidymodels fit + `glance()`:
 
-.small[
+.xsmall[
 ```{r glance-tidy}
 glance(tidy_lm)
 glance(tidy_lm)$r.squared
@@ -424,7 +426,7 @@ glance(tidy_lm)$r.squared
 **They're not exactly the same!**
 
 .pull-left[
-Base R fit + `glance()`:
+Base R fit + `augment()`:
 
 .small[
 ```{r augment-base}
@@ -477,7 +479,7 @@ rf_mod <- rand_forest(trees = 2000)
 
 --
 - Tidymodels pipelines start with splitting data into training and testing sets, and facilitate keeping them separate
-- Tidymodels is opiniated about which functions can be applied to testing data
+- Tidymodels is opioniated about which functions can be applied to testing data
 
 ---
 
@@ -863,7 +865,7 @@ evals %>%
 
 ## Teaching resources
 
-**Data Science in a Box** (datasciencebox.org](https://datasciencebox.org/)) contains slides, application exercises, computing labs, and homework assignments on modelling and inference with tidymodels:
+**Data Science in a Box** ([datasciencebox.org](https://datasciencebox.org/)) contains slides, application exercises, computing labs, and homework assignments on modelling and inference with tidymodels:
 
 .midi[
 - Slides and application exercises:
