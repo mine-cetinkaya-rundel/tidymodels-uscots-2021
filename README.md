@@ -1,3 +1,16 @@
+# Tidy up your models
+
+[USCOTS 2021](https://causeweb.org/cause/uscots/uscots21/1g-tidy-your-models)  
+Friday, June 28th, 2021  
+2:30 pm – 3:45 pm ET  
+
+---
+
+### :computer: [Slides](https://mine-cetinkaya-rundel.github.io/tidymodels-uscots-2021/tidy-up-models.html#1)
+### :cloud: [RStudio Cloud](ADD LINK) TO DO: UPDATE LINK
+### :pen: [Exercises](ADD LINK) (All of these can be found on RStudio Cloud as well, they're provided here for prticipants choosing to use their local setup) TO DO: UPDATE LINK
+
+
 The tidymodels framework is a collection of R packages for modeling and machine learning using tidyverse principles. In this session, we'll introduce the tidymodels framework and discuss how it can be incorporated into an introductory data science curriculum. We will walk through case studies for building linear and logistic regression models with the goals of prediction and classification, performing cross-validation, and evaluating model performance. We will also compare the tidymodels approach to more traditional modeling frameworks in R as well as touch on how to do statistical inference within the tidymodels framework.
 
 During the session, we will make use of polling questions and live coding. Participants will have the option to follow along with the exercises on RStudio Cloud.
