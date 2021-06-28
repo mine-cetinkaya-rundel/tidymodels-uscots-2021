@@ -794,7 +794,7 @@ evals %>%
 
 ## Teaching resources
 
-**Data Science in a Box** [datasciencebox.org](https://datasciencebox.org/) contains slides, application exercises, computing labs, and homework assignments on modelling and inference with tidymodels:
+**Data Science in a Box** ([datasciencebox.org](https://datasciencebox.org/)) contains slides, application exercises, computing labs, and homework assignments on modelling and inference with tidymodels:
 
 .midi[
 - Slides and application exercises:
