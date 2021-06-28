@@ -66,22 +66,59 @@ layout: true
 ```{r packages, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(emo)
-library(tidymodels)
-
 ```
 
-## Welcome
+class: middle, inverse
 
-- Introductions...
-- Useful links
-
-TO DO: Need to update hex for logo for workshop...
+## .larger[.dark-blue[.hand[Welcome]]]
 
 ---
 
-```{r out.width="98%", echo=FALSE}
-knitr::include_graphics("images/tidymodels.png")
+class: middle
+
+```{r out.width="50%", echo=FALSE}
+knitr::include_graphics("images/logo.png")
 ```
+
+.center[
+.large[
+One link for all materials
+
+🔗 [bit.ly/tidymodels-uscots21](https://bit.ly/tidymodels-uscots21)
+]]
+
+---
+
+.center[
+.pull-left[
+```{r out.width="60%", echo=FALSE}
+knitr::include_graphics("images/mine.png")
+```
+Mine Çetinkaya-Rundel <br>
+Duke University, RStudio
+]
+.pull-right[
+```{r out.width="60%", echo=FALSE}
+knitr::include_graphics("images/debbie.png")
+```
+Debbie Yuster <br>
+Ramapo College
+]
+]
+
+.center[
+```{r out.width="11%", echo = FALSE, align = "right"}
+knitr::include_graphics("images/julia.png")
+```
+Julia Silge  
+RStudio
+]
+
+---
+
+class: middle, inverse
+
+## .larger[.dark-blue[.hand[Hello tidymodels]]]
 
 ---
 
@@ -91,42 +128,64 @@ class: middle
 
 ---
 
-## With basic model fit (lm) alone, no advantage
+class: middle
 
-Not necessarily better way to do any linear model, better as a framework in general
+.pull-left[
+```{r out.width="100%", echo=FALSE}
+knitr::include_graphics("images/hello-tidymodels.png")
+```
+]
+.pull-right[
+The **tidymodels** framework is a collection of packages for modeling and machine learning using tidyverse principles.
+
+```{r eval = FALSE}
+install.packages("tidymodels")
+```
+]
+
+---
+
+.small[
+```{r}
+library(tidymodels)
+```
+]
+
+---
+
+```{r out.width="95%", echo=FALSE}
+knitr::include_graphics("images/tidymodels.png")
+```
+
+---
+
+## Plan
+
+1. First, let's talk about **syntax**
+2. Then, a little bit on **motivation**
+3. And finally **pedagogy**
 
 ---
 
 class: middle
 
-# Linear regression done two ways
+# Syntax
 
 ---
 
-## Paris Paintings
-### Meet the data curators
-
-.center[
-![](images/sandra-van-ginhoven.png) ![](images/hilary-coe-cronheim.png)
-
-Sandra van Ginhoven &nbsp; &nbsp; Hilary Coe Cronheim
-
-PhD students in the Duke Art, Law, and Markets Initiative in 2013
-]
+## Data: Paris Paintings
 
 - Source: Printed catalogs of 28 auction sales in Paris, 1764 - 1780
 - 3,393 paintings, their prices, and descriptive details from sales catalogs - over 60 variables
----
 
-## Depart pour la chasse
-
-```{r out.width="65%", echo=FALSE}
-knitr::include_graphics("images/depart-pour-la-chasse.png")
+```{r load-pp, message = FALSE, output.lines = 12}
+pp <- read_csv("data/paris-paintings.csv", na = c("n/a", "", "NA"))
+pp
 ```
 
 ---
 
-## Auction catalog text
+## Observation: Depart pour la chasse
 
 .pull-left[
 ```{r out.width="65%", echo=FALSE}
@@ -134,6 +193,9 @@ knitr::include_graphics("images/auction-catalogue.png")
 ```
 ]
 .pull-right[
+```{r out.width="58%", echo=FALSE}
+knitr::include_graphics("images/depart-pour-la-chasse.png")
+```
 .small[
 Two paintings very rich in composition, of a beautiful execution, and whose merit is very remarkable, each 17 inches 3 lines high, 23 inches wide; the first, painted on wood, comes from the Cabinet of Madame la Comtesse de Verrue; it represents a departure for the hunt: it shows in the front a child on a white horse, a man who gives the horn to gather the dogs, a falconer and other figures nicely distributed across the width of the painting; two horses drinking from a fountain; on the right in the corner a lovely country house topped by a terrace, on which people are at the table, others who play instruments; trees and fabriques pleasantly enrich the background.
 ]
@@ -141,20 +203,30 @@ Two paintings very rich in composition, of a beautiful execution, and whose meri
 
 ---
 
-```{r out.width = "65%", echo=FALSE}
-knitr::include_graphics("images/painting1.png")
-knitr::include_graphics("images/painting2.png")
-knitr::include_graphics("images/painting3.png")
+## Observation: Depart pour la chasse
+
+```{r results="hide"}
+pp %>%
+  filter(name == "R1777-89a") %>%
+  glimpse()
 ```
 
----
-
-## Minor detail: load data
-
-```{r load-pp, message = FALSE, output.lines = 15}
-pp <- read_csv("data/paris-paintings.csv", na = c("n/a", "", "NA"))
-pp
+.small[
+.pull-left[
+```{r output.lines=23, echo=FALSE}
+pp %>%
+  filter(name == "R1777-89a") %>%
+  glimpse()
 ```
+]
+.pull-right[
+```{r output.lines=24:44, echo=FALSE}
+pp %>%
+  filter(name == "R1777-89a") %>%
+  glimpse()
+```
+]
+]
 
 ---
 
@@ -373,11 +445,191 @@ tidy_lm_aug
 
 ---
 
-## Preprocess training and testing data together, recipes as a big picture
+class: middle
+
+# Motivation
 
 ---
 
-## Split into training/testing first
+## Provide similar interfaces to models
+
+- Q: How do you define the the number of trees when fitting a random forest model?
+
+--
+- A: Depends on the package: `randomForest::randomForest()` uses `ntree`, `ranger::ranger()` uses `num.trees`, Spark's `sparklyr::ml_random_forest()` uses `num_trees`.
+
+--
+- A, with tidymodels: 
+
+```{r eval = FALSE}
+rf_mod <- rand_forest(trees = 2000)
+```
+
+---
+
+## Help users avoid pitfalls
+
+<br>
+
+> *"Many models, especially complex predictive or machine learning models, can work very well on the data at hand but may fail when exposed to new data. Often, this issue is due to poor choices made during the development and/or selection of the models. Whenever possible, [tidymodels] software, documentation, and other materials attempt to prevent these and other pitfalls."* [[Source](https://www.tmwr.org/index.html)]
+
+<br>
+
+--
+- Tidymodels pipelines start with splitting data into training and testing sets, and facilitate keeping them separate
+- Tidymodels is opiniated about which functions can be applied to testing data
+
+---
+
+class: middle
+
+# Pedagogy
+
+---
+
+## For simple `lm`, might hard to see the advantage
+
+.pull-left[
+Base R:
+
+.small[
+```{r}
+lm(Height_in ~ Width_in, data = pp) %>%
+  summary()
+```
+]]
+
+.pull-right[
+Tidymodels:
+
+.small[
+```{r}
+linear_reg() %>%
+  set_engine("lm") %>%
+  fit(Height_in ~ Width_in, data = pp) %>%
+  tidy()
+```
+]]
+
+---
+
+## Though easier to see the advantage in the summary step
+
+.pull-left[
+Base R:
+
+.small[
+```{r}
+lm(Height_in ~ Width_in, data = pp) %>%
+  tidy()
+```
+]]
+
+.pull-right[
+Tidymodels:
+
+.small[
+```{r}
+linear_reg() %>%
+  set_engine("lm") %>%
+  fit(Height_in ~ Width_in, data = pp) %>%
+  tidy()
+```
+]]
+
+---
+
+## Pedagogical advantages more clear as you move on to different models
+
+.pull-left[
+```{r eval = FALSE}
+linear_reg() %>%
+  set_engine("lm") %>%
+  set_mode("regression")
+
+logistic_reg() %>% 
+  set_engine("glm") %>%
+  set_mode("classification")
+
+rand_forest() %>% 
+  set_engine("ranger") %>% 
+  set_mode("regression")
+
+decision_tree() %>% 
+  set_engine("rpart") %>% 
+  set_mode("regression")
+
+...
+```
+]
+
+--
+.pull-right[
+```{r eval = TRUE}
+svm_linear() %>% 
+  set_engine("LiblineaR") %>% 
+  set_mode("regression") 
+
+svm_linear() %>% 
+  set_engine("LiblineaR") %>% 
+  set_mode("classification")
+```
+]
+
+---
+
+## Build on dplyr pipelines to build recipes
+
+.pull-left[
+```{r eval=FALSE}
+email %>%
+  select(-from, -sent_email) %>%
+  mutate(
+    day_of_week = lubridate::wday(time),
+    month = lubridate::month(time)
+  ) %>%
+  select(-time) %>%
+  mutate(
+    cc = cut(cc, breaks = c(0, 1)),
+    attach = cut(attach, breaks = c(0, 1)),
+    dollar = cut(dollar, breaks = c(0, 1))
+  ) %>%
+  mutate(
+    inherit = cut(inherit, breaks = c(0, 1, 5, 10, 20)),
+    password = cut(password, breaks = c(0, 1, 5, 10, 20))
+  ) %>%
+  ...
+```
+]
+
+--
+.pull-right[
+```{r eval=FALSE}
+recipe(spam ~ ., data = email) %>%
+  step_rm(from, sent_email) %>%
+  step_date(
+    time, 
+    features = c("dow", "month")
+    ) %>%
+  step_rm(time) %>%
+  step_cut(
+    cc, 
+    attach, 
+    dollar, breaks = c(0, 1)
+    ) %>%
+  step_cut(
+    inherit, 
+    password, breaks = c(0, 1, 5, 10, 20)
+    ) %>%
+  ...
+```
+]
+
+---
+
+class: middle, inverse
+
+## .larger[.dark-blue[.hand[Case studies]]]
 
 ---
 
@@ -405,23 +657,168 @@ cross validation, autoplot
 
 ---
 
+class: middle, inverse
+
+## .larger[.dark-blue[.hand[Wrap up]]]
+
+---
+
 class: middle
 
-# Wrap up
+# What about inference?
 
 ---
 
-## What about inference?
+## Suppose...
+
+Estimate the difference between the average evaluation score of male and female faculty.
+
+.midi[
+```{r message = FALSE}
+library(openintro)
+evals %>%
+  select(score, rank, ethnicity, gender, bty_avg)
+```
+]
 
 ---
 
-## Resources from dsbox
+.pull-left[
+.midi[
+```{r cache=TRUE}
+evals %>%
+  specify(score ~ gender) %>%
+  generate(reps = 1000, 
+    type = "bootstrap") %>%
+  calculate(stat = "diff in means", 
+    order = c("male", "female")) %>%
+  summarise(
+    l = quantile(stat, 0.025), 
+    u = quantile(stat, 0.975)
+    )
+```
+]
+]
+.pull-right[
+.midi[
+```{r}
+t.test(evals$score ~ evals$gender)
+```
+]
+]
+
+---
+
+## infer $\in$ tidymodels
+
+.pull-left[
+The objective of **infer** is to perform statistical inference using an expressive statistical grammar that coheres with the tidyverse design framework.
+]
+.pull-right[
+```{r echo=FALSE, fig.alt = "Hex sticker for the infer package."}
+knitr::include_graphics("images/infer.png")
+```
+]
+
+---
+
+.midi[
+```{r infer-1}
+evals %>%
+  specify(score ~ gender)
+```
+]
+
+---
+
+.midi[
+```{r infer-2, cache=TRUE}
+set.seed(1234)
+evals %>%
+  specify(score ~ gender) %>%
+  generate(reps = 1000, type = "bootstrap")
+```
+]
+
+---
+
+.midi[
+```{r infer-3, cache=TRUE}
+set.seed(1234)
+evals %>%
+  specify(score ~ gender) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("male", "female"))
+```
+]
+
+---
+
+.midi[
+```{r infer-4, cache=TRUE, out.width = "60%"}
+set.seed(1234)
+evals %>%
+  specify(score ~ gender) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("male", "female")) %>%
+  visualise()
+```
+]
+
+---
+
+.midi[
+```{r infer-5, cache=TRUE}
+set.seed(1234)
+evals %>%
+  specify(score ~ gender) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("male", "female")) %>%
+  summarise(l = quantile(stat, 0.025), u = quantile(stat, 0.975))
+```
+]
+
+---
+
+## Learning resources
+
+.large[
+`r emo::ji("chequered_flag")` **Get started** with tidymodels: [tidymodels.org/start](https://www.tidymodels.org/start/)
+
+`r emo::ji("page_facing_up")` **Learn** more and go further: [tidymodels.org/learn](https://www.tidymodels.org/learn/)
+
+`r emo::ji("blue_book")` **Tidy Modeling with R** by Max Kuhn & Julia Silge: [tmwr.org](https://www.tmwr.org/)
+]
+
+---
+
+## Teaching resources
+
+**Data Science in a Box** (datasciencebox.org](https://datasciencebox.org/)) contains slides, application exercises, computing labs, and homework assignments on modelling and inference with tidymodels:
+
+.midi[
+- Slides and application exercises:
+  - [Modelling data](https://datasciencebox.org/making-rigorous-conclusions.html#modelling-data)
+  - [Classification and model building](https://datasciencebox.org/making-rigorous-conclusions.html#classification-and-model-building)
+  - [Model validation](https://datasciencebox.org/making-rigorous-conclusions.html#model-validation)
+  - [Uncertainty quantification](https://datasciencebox.org/making-rigorous-conclusions.html#uncertainty-quantification)
+- [Labs](https://datasciencebox.org/making-rigorous-conclusions.html#labs-2)
+  - Grading the professor: Fitting and interpreting simple linear regression models
+  - Smoking while pregnant: Constructing confidence intervals, conducting hypothesis tests, and interpreting results in context of the data
+- [Homework assignments](https://datasciencebox.org/making-rigorous-conclusions.html#homework-assignments-1):
+  - Bike rentals in DC: Exploratory data analysis and fitting and interpreting models
+  - Exploring the GSS: Fitting and interpreting models
+  - Modelling the GSS: Model validation and inference
+]
 
 ---
 
 class: center, middle
 
+.huge[
 .hand[thank you!]
+]
 
-TO DO: ADD LINKS AGAIN
-
+.large[
+🔗 [bit.ly/tidymodels-uscots21](https://bit.ly/tidymodels-uscots21)
+]
