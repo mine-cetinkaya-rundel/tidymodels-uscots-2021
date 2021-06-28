@@ -30,6 +30,8 @@ ggplot2::theme_set(ggplot2::theme_minimal(base_size = 16))
 library(xaringanExtra)
 xaringanExtra::use_panelset()
 
+library(countdown)
+
 # output number of lines
 hook_output <- knitr::knit_hooks$get("output")
 knitr::knit_hooks$set(output = function(x, options) {
@@ -282,7 +284,9 @@ tidy(tidy_lm)
 
 class: middle
 
+.large[
 .hand[Let's rewind and redo, step-by-step, with tidymodels]
+]
 
 ---
 
@@ -672,59 +676,509 @@ These books are from the bookshelf of J. H. Maindonald at Australian National Un
 
 ## Book weight vs. volume
 
-.pull-left[
-```{r}
-linear_reg() %>%
-  set_engine("lm") %>%
-  fit(weight ~ volume, data = allbacks) %>%
-  tidy()
-```
-]
-.pull-right[
-```{r out.width = "75%", echo = FALSE, fig.align = "right"}
+```{r out.width = "75%", echo = FALSE}
 ggplot(allbacks, aes(x = volume, y = weight)) +
   geom_point(alpha = 0.7, size = 3)
 ```
-]
 
 ---
 
 ## Book weight vs. volume and cover
 
-.pull-left[
-```{r}
-linear_reg() %>%
-  set_engine("lm") %>%
-  fit(weight ~ volume + cover, data = allbacks) %>%
-  tidy()
-```
-]
-.pull-right[
-```{r out.width = "75%", echo = FALSE, fig.align = "right"}
+```{r out.width = "75%", echo = FALSE}
 ggplot(allbacks, aes(x = volume, y = weight, color = cover, shape = cover)) +
   geom_point(alpha = 0.7, size = 3) +
   theme(legend.position = "bottom") +
   scale_color_manual(values = c("#E48957", "#071381"))
 ```
-]
 
----
-
-MLR example without recipes
-
-- fit model
-- prediction
-- breakout room: 10 min
-		
 ---
 
 class: middle
 
-# Case study 2: Logistic, more complex...
+.your-turn[
+**Your turn:** Let's fit a simple multiple linear regression model!
+
+- Go to RStudio Cloud: INSERT LINK
+- Join the space and click on **Projects** on top
+- **Start** the project titled **Books**
+- Open the R Markdown document called `books.Rmd` and follow the instructions
+]
+
+```{r echo = FALSE}
+countdown(minutes = 10)
+```
 
 ---
 
-cross validation, autoplot
+class: middle
+
+# Case study 2: Predicting spam
+
+.hand[Leveraging (much of) the tidymodels framework to continue...]
+
+---
+
+## Spam filters
+
+.pull-left-narrow[
+- Data from 3921 emails and 21 variables on them
+- Outcome: whether the email is spam or not
+- Predictors: number of characters, whether the email had "Re:" in the subject, time at which email was sent, number of times the word "inherit" shows up in the email, etc.
+]
+.pull-right-wide[
+.small[
+```{r}
+library(openintro)
+glimpse(email)
+```
+]
+]
+
+---
+
+class: middle
+
+.large[
+.hand[first we warm the students up to the data...]
+]
+
+---
+
+.question[
+Would you expect longer or shorter emails to be spam?
+]
+
+--
+
+.pull-left[
+```{r echo=FALSE, out.width="100%"}
+library(ggridges)
+email %>%
+  ggplot(aes(x = num_char, y = spam, fill = spam, color = spam)) +
+  geom_density_ridges2(alpha = 0.5) +
+  labs(
+    x = "Number of characters (in thousands)", 
+    y = "Spam",
+    title = "Spam vs. number of characters"
+    ) +
+  guides(color = FALSE, fill = FALSE) +
+  scale_fill_manual(values = c("#E48957", "#CA235F")) +
+  scale_color_manual(values = c("#DEB4A0", "#CA235F"))
+```
+]
+.pull-right[
+```{r echo=FALSE}
+email %>% 
+  group_by(spam) %>% 
+  summarise(mean_num_char = mean(num_char))
+```
+]
+
+---
+
+.question[
+Would you expect emails that have subjects starting with "Re:", "RE:", "re:", or "rE:" to be spam or not?
+]
+
+--
+
+```{r echo=FALSE}
+email %>%
+  ggplot(aes(x = re_subj, fill = spam)) +
+  geom_bar(position = "fill") +
+  labs(
+    x = 'Whether “re:”, "RE:", etc. was in the email subject.', 
+    fill = "Spam", 
+    y = NULL,
+    title = 'Spam vs. "re:" in subject'
+    ) +
+  scale_fill_manual(values = c("#DEB4A0", "#CA235F"))
+```
+
+---
+
+class: middle
+
+.large[
+.hand[then we introduce logistic regression and generalized linear models (GLMs) in general, build a few logistic regression models with one or two predictors, interpret results...]
+]
+
+---
+
+## Predicting spam
+
+.panelset[
+.panel[.panel-name[Output]
+.small[
+```{r ref.label = "spam-mlr", echo = FALSE, warning = FALSE}
+```
+]
+]
+.panel[.panel-name[Code]
+```{r spam-mlr, results = "hide"}
+logistic_reg() %>%
+  set_engine("glm") %>%
+  fit(spam ~ ., data = email, family = "binomial") %>%
+  tidy() %>%
+  print(n = 22)
+```
+]
+]
+
+---
+
+## Prediction
+
+- The mechanics of prediction is **easy**:
+  - Plug in values of predictors to the model equation
+  - Calculate the predicted value of the response variable, $\hat{y}$
+
+--
+- Getting it right is **hard**!
+  - There is no guarantee the model estimates you have are correct
+  - Or that your model will perform as well with new data as it did with your sample data
+
+---
+
+## Spending our data
+
+- Several steps to create a useful model: parameter estimation, model selection, performance assessment, etc.
+
+- Doing all of this on the entire data we have available can lead to **overfitting**
+
+- Allocate specific subsets of data for different tasks, as opposed to allocating the largest possible amount to the model parameter estimation only (which is what we've done so far)
+
+---
+
+## Splitting data
+
+- **Training set:**
+  - Sandbox for model building 
+  - Spend most of your time using the training set to develop the model
+  - Majority of the data (usually 80%)
+  
+- **Testing set:**
+  - Held in reserve to determine efficacy of one or two chosen models
+  - Critical to look at it once, otherwise it becomes part of the modeling process
+  - Remainder of the data (usually 20%)
+  
+---
+
+## Performing the split
+
+```{r}
+# Fix random numbers by setting the seed 
+# Enables analysis to be reproducible when random numbers are used 
+set.seed(1116)
+
+# Put 80% of the data into the training set 
+email_split <- initial_split(email, prop = 0.80)
+
+# Create data frames for the two sets:
+train_data <- training(email_split)
+test_data  <- testing(email_split)
+```
+
+---
+
+## Peek at the split
+
+.small[
+.pull-left[
+```{r}
+glimpse(train_data)
+```
+]
+.pull-right[
+```{r}
+glimpse(test_data)
+```
+]
+]
+
+---
+
+## Feature engineering
+
+- We prefer simple models when possible, but **parsimony** does not mean sacrificing accuracy (or predictive performance) in the interest of simplicity
+
+--
+- Variables that go into the model and how they are represented are just as critical to success of the model
+
+--
+- **Feature engineering** allows us to get creative with our predictors in an effort to make them more useful for our model (to increase its predictive performance) 
+
+---
+
+## A simple approach: `mutate()`
+
+```{r message=FALSE}
+library(lubridate)
+
+train_data %>%
+  mutate(
+    date = date(time),
+    dow  = wday(time),
+    month = month(time)
+    ) %>%
+  select(time, date, dow, month) %>%
+  sample_n(size = 5) # shuffle to show a variety
+```
+
+---
+
+## Modeling workflow, revisited
+
+- Create a **recipe** for feature engineering steps to be applied to the training data
+
+--
+- Fit the model to the training data after these steps have been applied
+
+--
+- Using the model estimates from the training data, predict outcomes for the test data
+
+--
+- Evaluate the performance of the model on the test data
+
+---
+
+## You gotta keep them separated!
+
+- We might not want to use the data we have as is
+
+- We might want to "engineer features", omit certain variables, etc.
+
+- And we need a way of doing this in a way that can be applied to both training and testing data, ideally without making us do extra work
+
+- Enter **recipes** to help with this!
+
+---
+
+## Initiate a recipe
+
+```{r initiate-recipe, results="hide"}
+email_rec <- recipe(
+  spam ~ .,          # formula
+  data = train_data  # data to use for cataloguing names and types of variables
+  )
+
+summary(email_rec)
+```
+
+.xsmall[
+```{r echo=FALSE}
+summary(email_rec) %>% print(n = 21)
+```
+]
+
+---
+
+## Remove certain variables
+
+```{r}
+email_rec <- email_rec %>%
+  step_rm(from, sent_email)
+```
+
+.small[
+```{r echo=FALSE}
+email_rec
+```
+]
+
+---
+
+## Feature engineer date
+
+```{r}
+email_rec <- email_rec %>%
+  step_date(time, features = c("dow", "month")) %>%
+  step_rm(time)
+```
+
+.small[
+```{r echo=FALSE}
+email_rec
+```
+]
+
+---
+
+## Discretize numeric variables
+
+```{r}
+email_rec <- email_rec %>%
+  step_cut(cc, attach, dollar, breaks = c(0, 1)) %>%
+  step_cut(inherit, password, breaks = c(0, 1, 5, 10, 20))
+```
+
+.small[
+```{r echo=FALSE}
+email_rec
+```
+]
+
+---
+
+## Create dummy variables
+
+```{r}
+email_rec <- email_rec %>%
+  step_dummy(all_nominal(), -all_outcomes())
+```
+
+.small[
+```{r echo=FALSE}
+email_rec
+```
+]
+
+---
+
+## Remove zero variance variables
+
+Variables that contain only a single value
+
+```{r}
+email_rec <- email_rec %>%
+  step_zv(all_predictors())
+```
+
+.small[
+```{r echo=FALSE}
+email_rec
+```
+]
+
+---
+
+## All in one place
+
+```{r}
+email_rec <- recipe(spam ~ ., data = email) %>%
+  step_rm(from, sent_email) %>%
+  step_date(time, features = c("dow", "month")) %>%               
+  step_rm(time) %>%
+  step_cut(cc, attach, dollar, breaks = c(0, 1)) %>%
+  step_cut(inherit, password, breaks = c(0, 1, 5, 10, 20)) %>%
+  step_dummy(all_nominal(), -all_outcomes()) %>%
+  step_zv(all_predictors())
+```
+
+---
+
+## What's next?
+
+- We have our data split into testing and training
+- We know the recipe steps we want to apply to our testing and training data
+- We now need to define the model to fit and collect model results
+- Lots of bookkeeping is needed to make sure we're not training our model on testing data
+- Enter **workflows** to help with this!
+
+---
+
+## Define model
+
+```{r}
+email_mod <- logistic_reg() %>% 
+  set_engine("glm")
+
+email_mod
+```
+
+---
+
+## Define workflow
+
+**Workflows** bring together models and recipes so that they can be easily applied to both the training and test data.
+
+```{r}
+email_wflow <- workflow() %>% 
+  add_model(email_mod) %>% 
+  add_recipe(email_rec)
+```
+
+.small[
+```{r echo=FALSE}
+email_wflow
+```
+]
+
+---
+
+## Fit model to training data
+
+```{r warning = FALSE}
+email_fit <- email_wflow %>% 
+  fit(data = train_data)
+```
+
+---
+
+.small[
+```{r}
+tidy(email_fit) %>% print(n = 31)
+```
+]
+
+---
+
+## Make predictions for test data
+
+```{r warning = FALSE}
+email_pred <- predict(email_fit, test_data, type = "prob") %>% 
+  bind_cols(test_data) 
+
+email_pred
+```
+
+---
+
+## Evaluate the performance
+
+.pull-left[
+```{r roc-again, fig.show="hide"}
+email_pred %>%
+  roc_curve(
+    truth = spam,
+    .pred_1,
+    event_level = "second"
+  ) %>%
+  autoplot()
+```
+]
+.pull-right[
+```{r ref.label="roc-again", echo=FALSE, out.width="100%"}
+```
+]
+
+---
+
+## Evaluate the performance
+
+.pull-left[
+```{r}
+email_pred %>%
+  roc_auc(
+    truth = spam,
+    .pred_1,
+    event_level = "second"
+  )
+```
+]
+.pull-right[
+```{r ref.label="roc-again", echo=FALSE, out.width="100%"}
+```
+]
+
+---
+
+class: middle
+
+.large[
+.hand[and we could keep going with performing cross validation, and much more...]
+]
 
 ---
 
