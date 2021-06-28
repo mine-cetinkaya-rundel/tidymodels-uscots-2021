@@ -1,5 +1,65 @@
 ---
 title: "A *very* simple multivariable model"
-output: html_document
+output: github_document
 ---
 
+## Load packages
+
+```{r message = FALSE}
+library(DAAG)
+library(tidyverse)
+library(tidymodels)
+```
+
+## Take a peek at the data
+
+```{r}
+allbacks <- as_tibble(allbacks)
+allbacks
+```
+
+## Single predictor
+
+1. Fit a model predicting weight from volume
+
+```{r eval = FALSE}
+m_simple <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(___ ~ ___, data = ___)
+```
+
+2. Print a tidy summary of the model
+
+```{r eval = FALSE}
+___(m_simple)
+```
+
+## Multiple predictors
+
+1. Fit a model predicting weight from volume and cover
+
+```{r eval = FALSE}
+m_multi <- ___ %>%
+  ___ %>%
+  fit(___ ~ ___, data = ___)
+```
+
+2. Print a tidy summary of the model
+
+```{r}
+
+```
+
+## Comparing models
+
+Find the R-squared and the adjusted R-squared of the two models and compare them.
+
+Hint: You'll want the `glance()` function to access these statistics.
+
+```{r}
+
+```
+
+## Discuss
+
+What felt natural? What seems confusing so far?
