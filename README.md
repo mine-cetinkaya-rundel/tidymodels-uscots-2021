@@ -1,5 +1,3 @@
-# Tidy Up Your Models
-
 The tidymodels framework is a collection of R packages for modeling and machine learning using tidyverse principles. In this session, we'll introduce the tidymodels framework and discuss how it can be incorporated into an introductory data science curriculum. We will walk through case studies for building linear and logistic regression models with the goals of prediction and classification, performing cross-validation, and evaluating model performance. We will also compare the tidymodels approach to more traditional modeling frameworks in R as well as touch on how to do statistical inference within the tidymodels framework.
 
 During the session, we will make use of polling questions and live coding. Participants will have the option to follow along with the exercises on RStudio Cloud.
@@ -10,7 +8,8 @@ The intended audience for the session is anyone who is interested in an introduc
 
 TO DO: Link to relevant bits in the slide deck
 
-- Welcome & Introduction to tidymodels
+- Welcome 
+- Hello tidymodels
 - Case studies
 - Wrap-up
 
@@ -22,4 +21,4 @@ TO DO: Link to relevant bits in the slide deck
 
 <img src="images/debbie.png" align = "right" width = "200px">
 
-[**Debbie Yuster**](https://www.ramapo.edu/tas/faculty/debbie-yuster/) (Ramapo College) is an Assistant Professor of Data Science and Mathematics at Ramapo College of New Jersey. At Ramapo College, Debbie has developed new courses including Introduction to Data Science and Ethics for Data Science. Debbie enjoys participating in communities of practice around curricula and open-source tools, contributing by employing her eagle-eye editing skills to refine instructional materials, as well as by helping fellow newcomers through onboarding and troubleshooting. Debbie received a Ph.D. in Mathematics from Columbia, and a B.A. in Mathematics (with Computer Science concentration) from Cornell.
+[**Debbie Yuster**](https://www.ramapo.edu/tas/faculty/debbie-yuster/) (Ramapo College) is an Assistant Professor of Data Science and Mathematics at Ramapo College of New Jersey. At Ramapo College, Debbie has developed new courses including Introduction to Data Science and Ethics for Data Science. Debbie enjoys participating in communities of practice around curricula and open-source tools, contributing by employing her eagle-eye editing skills to refine instructional materials, as well as by helping fellow newcomers through onboarding and troubleshooting. Debbie received a Ph.D. in Mathematics from Columbia University, and a B.A. in Mathematics (with Computer Science concentration) from Cornell University.
