@@ -250,7 +250,7 @@ base_lm <- lm(Height_in ~ Width_in, data = pp)
 
 --
 
-- Summarise:
+- Summarize:
 
 ```{r, output.lines = 9:15}
 summary(base_lm)
@@ -270,7 +270,7 @@ tidy_lm <- linear_reg() %>%
 
 --
 
-- Summarise:
+- Summarize:
 
 ```{r}
 tidy(tidy_lm)
@@ -313,7 +313,7 @@ linear_reg() %>%
 
 ---
 
-## Step 4: Summarise model output
+## Step 4: Summarize model output
 
 ```{r summarise-model}
 linear_reg() %>%
@@ -352,9 +352,9 @@ linear_reg() %>%
 
 ---
 
-## A note on summarising model output
+## A note on summarizing model output
 
-- Models fit with base R can be summarised with `tidy()` as well
+- Models fit with base R can be summarized with `tidy()` as well
 - So you don't have to use the full tidymodels pipeline to benefit from the *tidy* output
 
 .pull-left[
@@ -477,7 +477,7 @@ rf_mod <- rand_forest(trees = 2000)
 
 --
 - Tidymodels pipelines start with splitting data into training and testing sets, and facilitate keeping them separate
-- Tidymodels is opiniated about which functions can be applied to testing data
+- Tidymodels is opioniated about which functions can be applied to testing data
 
 ---
 
@@ -794,7 +794,7 @@ evals %>%
 
 ## Teaching resources
 
-**Data Science in a Box** (datasciencebox.org](https://datasciencebox.org/)) contains slides, application exercises, computing labs, and homework assignments on modelling and inference with tidymodels:
+**Data Science in a Box** [datasciencebox.org](https://datasciencebox.org/) contains slides, application exercises, computing labs, and homework assignments on modelling and inference with tidymodels:
 
 .midi[
 - Slides and application exercises:
