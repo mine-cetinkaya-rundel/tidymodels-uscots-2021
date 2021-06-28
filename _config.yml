@@ -1,1 +1,7 @@
+title: Tidy up your models
+description: Materials for the 'Tidy up your models' workshop at USCOTS 2021
+logo: images/logo.png
+show_downloads: true
 theme: jekyll-theme-minimal
+plugins:
+  - jemoji

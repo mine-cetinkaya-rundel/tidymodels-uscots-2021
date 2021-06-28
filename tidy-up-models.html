@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Welcome!</title>
+    <title>Tidy up your models</title>
     <meta charset="utf-8" />
-    <meta name="author" content="datasciencebox.org" />
+    <meta name="author" content=" Mine Çetinkaya-Rundel and Debbie Yuster" />
     <script src="libs/header-attrs-2.9/header-attrs.js"></script>
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.6/panelset.js"></script>
@@ -14,10 +14,10 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# Welcome!
-## <br><br> Tidy up your models
-### <a href="https://datasciencebox.org/">datasciencebox.org</a>
-### Mine Çetinkaya-Rundel and Debbie Yuster
+# Tidy up your models
+## <br>🔗 <a href="https://bit.ly/tidymodels-uscots21/">bit.ly/tidymodels-uscots21</a>
+### <br>Mine Çetinkaya-Rundel and Debbie Yuster
+### USCOTS 2021
 
 ---
 
@@ -28,7 +28,7 @@ layout: true
   
 &lt;div class="my-footer"&gt;
 &lt;span&gt;
-&lt;a href="https://datasciencebox.org" target="_blank"&gt;INSERT LINK&lt;/a&gt;
+&lt;a href="https://bit.ly/tidymodels-uscots21" target="_blank"&gt;bit.ly/tidymodels-uscots21&lt;/a&gt;
 &lt;/span&gt;
 &lt;/div&gt; 
 
@@ -42,6 +42,10 @@ layout: true
 - Useful links
 
 TO DO: Need to update hex for logo for workshop...
+
+---
+
+&lt;img src="images/tidymodels.png" width="98%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -80,14 +84,14 @@ PhD students in the Duke Art, Law, and Markets Initiative in 2013
 
 ## Depart pour la chasse
 
-&lt;img src="images/depart-pour-la-chasse.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="images/depart-pour-la-chasse.png" width="65%" style="display: block; margin: auto;" /&gt;
 
 ---
 
 ## Auction catalog text
 
 .pull-left[
-&lt;img src="images/auction-catalogue.png" width="70%" style="display: block; margin: auto;" /&gt;
+&lt;img src="images/auction-catalogue.png" width="65%" style="display: block; margin: auto;" /&gt;
 ]
 .pull-right[
 .small[
@@ -97,29 +101,99 @@ Two paintings very rich in composition, of a beautiful execution, and whose meri
 
 ---
 
-&lt;img src="images/painting1.png" width="80%" style="display: block; margin: auto;" /&gt;&lt;img src="images/painting2.png" width="80%" style="display: block; margin: auto;" /&gt;&lt;img src="images/painting3.png" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="images/painting1.png" width="65%" style="display: block; margin: auto;" /&gt;&lt;img src="images/painting2.png" width="65%" style="display: block; margin: auto;" /&gt;&lt;img src="images/painting3.png" width="65%" style="display: block; margin: auto;" /&gt;
 
 ---
 
-## Linear regression with the Paris Paintings dataset
+## Minor detail: load data
 
 
 ```r
-pp &lt;- read_csv(
-  "data/paris-paintings.csv", 
-  na = c("n/a", "", "NA")
-  )
+pp &lt;- read_csv("data/paris-paintings.csv", na = c("n/a", "", "NA"))
+pp
+```
+
+```
+## # A tibble: 3,393 x 61
+##   name     sale  lot   position dealer  year origin_author
+##   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;        
+## 1 L1764-2  L1764 2       0.0328 L       1764 F            
+## 2 L1764-3  L1764 3       0.0492 L       1764 I            
+## 3 L1764-4  L1764 4       0.0656 L       1764 X            
+## 4 L1764-5a L1764 5       0.0820 L       1764 F            
+## 5 L1764-5b L1764 5       0.0820 L       1764 F            
+## 6 L1764-6  L1764 6       0.0984 L       1764 X            
+## # … with 3,387 more rows, and 54 more variables:
+## #   origin_cat &lt;chr&gt;, school_pntg &lt;chr&gt;,
+## #   diff_origin &lt;dbl&gt;, logprice &lt;dbl&gt;, price &lt;dbl&gt;,
+## #   count &lt;dbl&gt;, subject &lt;chr&gt;, authorstandard &lt;chr&gt;,
+## #   artistliving &lt;dbl&gt;, authorstyle &lt;chr&gt;, author &lt;chr&gt;,
+## #   winningbidder &lt;chr&gt;, winningbiddertype &lt;chr&gt;,
+...
+```
+
+---
+
+## Linear regression, two ways
+
+- **Goal:** Predict height of painting (`Height_in`) from width (`Width_in`)
+
+- **Approach:**
+  1. Using base R
+  2. Using tidymodels
+
+---
+
+## Approach 1. Base R
+
+- Fit:
+
+
+```r
+base_lm &lt;- lm(Height_in ~ Width_in, data = pp)
 ```
 
 --
 
-### Predicting height from width: Base R syntax
-
+- Summarise:
 
 
 ```r
-base_r_ht_wt &lt;- lm(Height_in ~ Width_in, data = pp)
-tidy(base_r_ht_wt)
+summary(base_lm)
+```
+
+```
+...
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 3.621406   0.253860   14.27   &lt;2e-16 ***
+## Width_in    0.780796   0.009505   82.15   &lt;2e-16 ***
+## ---
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+...
+```
+
+---
+
+## Approach 2. Tidymodels
+
+- Fit:
+
+
+```r
+tidy_lm &lt;- linear_reg() %&gt;%
+  set_engine("lm") %&gt;%
+  fit(Height_in ~ Width_in, data = pp)
+```
+
+--
+
+- Summarise:
+
+
+```r
+tidy(tidy_lm)
 ```
 
 ```
@@ -130,15 +204,14 @@ tidy(base_r_ht_wt)
 ## 2 Width_in       0.781   0.00950      82.1 0
 ```
 
-
-`$$\widehat{Height_{in}} = 3.62 + 0.78~Width_{in}$$`
 ---
 
-&lt;img src="images/tidymodels.png" width="98%" style="display: block; margin: auto;" /&gt;
+class: middle
+
+.hand[Let's rewind and redo, step-by-step, with tidymodels]
 
 ---
 
-# Rewind and redo, with tidymodels
 ## Step 1: Specify model
 
 
@@ -182,7 +255,7 @@ linear_reg() %&gt;%
 ```
 ## parsnip model object
 ## 
-## Fit time:  3ms 
+## Fit time:  2ms 
 ## 
 ## Call:
 ## stats::lm(formula = Height_in ~ Width_in, data = data)
@@ -194,29 +267,7 @@ linear_reg() %&gt;%
 
 ---
 
-## A closer look at model output
-
-
-```
-## parsnip model object
-## 
-## Fit time:  1ms 
-## 
-## Call:
-## stats::lm(formula = Height_in ~ Width_in, data = data)
-## 
-## Coefficients:
-## (Intercept)     Width_in  
-##      3.6214       0.7808
-```
-
-.large[
-`$$\widehat{Height\_{in}} = 3.6214 + 0.7808 \times Width\_{in}$$`
-]
-
----
-
-## A tidy look at model output
+## Step 4: Summarise model output
 
 
 ```r
@@ -234,36 +285,83 @@ linear_reg() %&gt;%
 ## 2 Width_in       0.781   0.00950      82.1 0
 ```
 
-.large[
-`$$\widehat{height\_{in}} = 3.62 + 0.781 \times width\_{in}$$`
-]
+---
+
+## Linear regression, two ways
+
+### Side-by-side comparison
+
+.pull-left[
+Base R:
+
+.small[
+
+```r
+lm(Height_in ~ Width_in, data = pp) %&gt;%
+  summary()
+```
+
+```
+## 
+## Call:
+## lm(formula = Height_in ~ Width_in, data = pp)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -86.714  -4.384  -2.422   3.169  85.084 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 3.621406   0.253860   14.27   &lt;2e-16 ***
+## Width_in    0.780796   0.009505   82.15   &lt;2e-16 ***
+## ---
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 8.304 on 3133 degrees of freedom
+##   (258 observations deleted due to missingness)
+## Multiple R-squared:  0.6829,	Adjusted R-squared:  0.6828 
+## F-statistic:  6749 on 1 and 3133 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+.pull-right[
+Tidymodels:
+
+.small[
+
+```r
+linear_reg() %&gt;%
+  set_engine("lm") %&gt;%
+  fit(Height_in ~ Width_in, data = pp) %&gt;%
+  tidy()
+```
+
+```
+## # A tibble: 2 x 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)    3.62    0.254        14.3 8.82e-45
+## 2 Width_in       0.781   0.00950      82.1 0
+```
+]]
 
 ---
 
-## Side-by-side comparison: Fitting the linear model
+## A note on summarising model output
+
+- Models fit with base R can be summarised with `tidy()` as well
+- So you don't have to use the full tidymodels pipeline to benefit from the *tidy* output
 
 .pull-left[
-.midi[
 Base R:
+
+.small[
 
 ```r
 lm(Height_in ~ Width_in, data = pp) %&gt;%
   tidy()
 ```
-]]
-
-.pull-right[
-.midi[
-tidymodels:
-
-```r
-linear_reg() %&gt;%
-  set_engine("lm") %&gt;%
-  fit(Height_in ~ Width_in, data = pp) %&gt;%
-  tidy()
-```
-]]
-
 
 ```
 ## # A tibble: 2 x 5
@@ -272,6 +370,28 @@ linear_reg() %&gt;%
 ## 1 (Intercept)    3.62    0.254        14.3 8.82e-45
 ## 2 Width_in       0.781   0.00950      82.1 0
 ```
+]]
+
+.pull-right[
+Tidymodels:
+
+.small[
+
+```r
+linear_reg() %&gt;%
+  set_engine("lm") %&gt;%
+  fit(Height_in ~ Width_in, data = pp) %&gt;%
+  tidy()
+```
+
+```
+## # A tibble: 2 x 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)    3.62    0.254        14.3 8.82e-45
+## 2 Width_in       0.781   0.00950      82.1 0
+```
+]]
 
 ---
 
@@ -280,100 +400,126 @@ linear_reg() %&gt;%
 Achieved with functions from the `broom` package:
 
 - `tidy`: Constructs a data frame that summarizes the model's statistical findings: coefficient estimates, *standard errors, test statistics, p-values*.
+
 - `glance`: Constructs a concise one-row summary of the model. This typically contains values such as `\(R^2\)`, adjusted `\(R^2\)`, *and residual standard errors that are computed once for the entire model*.
+
 - `augment`: Adds columns to the original data that was modeled. This includes predictions and residuals.
 
 ---
 
-## Side-by-side comparison: Using augment()
+## Comparison: `glance()`
+
+**They're the same!**
 
 .pull-left[
+Base R fit + `glance()`:
+
 .small[
-Base R model + augment():
 
 ```r
-base_r_ht_wt &lt;- lm(Height_in ~ Width_in, data = pp)
-base_r_ht_wt_aug &lt;- augment(base_r_ht_wt)
-base_r_ht_wt_aug
+glance(base_lm)
+```
+
+```
+## # A tibble: 1 x 12
+##   r.squared adj.r.squared sigma statistic p.value    df
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+## 1     0.683         0.683  8.30     6749.       0     1
+## # … with 6 more variables: logLik &lt;dbl&gt;, AIC &lt;dbl&gt;,
+## #   BIC &lt;dbl&gt;, deviance &lt;dbl&gt;, df.residual &lt;int&gt;,
+## #   nobs &lt;int&gt;
+```
+
+```r
+glance(base_lm)$r.squared
+```
+
+```
+## [1] 0.6829468
 ```
 ]]
 
 .pull-right[
+Tidymodels fit + `glance()`:
+
 .small[
-tidymodels model + augment():
 
 ```r
-tidy_ht_wt &lt;- linear_reg() %&gt;%
-  set_engine("lm") %&gt;%
-  fit(Height_in ~ Width_in, data = pp)
-tidy_ht_wt_aug &lt;- augment(tidy_ht_wt$fit)
-tidy_ht_wt_aug
+glance(tidy_lm)
+```
+
+```
+## # A tibble: 1 x 12
+##   r.squared adj.r.squared sigma statistic p.value    df
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+## 1     0.683         0.683  8.30     6749.       0     1
+## # … with 6 more variables: logLik &lt;dbl&gt;, AIC &lt;dbl&gt;,
+## #   BIC &lt;dbl&gt;, deviance &lt;dbl&gt;, df.residual &lt;int&gt;,
+## #   nobs &lt;int&gt;
+```
+
+```r
+glance(tidy_lm)$r.squared
+```
+
+```
+## [1] 0.6829468
 ```
 ]]
-
-
-```
-## # A tibble: 3,135 x 9
-##    .rownames Height_in Width_in .fitted  .resid     .hat .sigma      .cooksd .std.resid
-##    &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;        &lt;dbl&gt;      &lt;dbl&gt;
-##  1 1                37     29.5   26.7  10.3    0.000399   8.30 0.000310         1.25  
-##  2 2                18     14     14.6   3.45   0.000396   8.31 0.0000342        0.415 
-##  3 3                13     16     16.1  -3.11   0.000361   8.31 0.0000254       -0.375 
-##  4 4                14     18     17.7  -3.68   0.000337   8.31 0.0000330       -0.443 
-##  5 5                14     18     17.7  -3.68   0.000337   8.31 0.0000330       -0.443 
-##  6 6                 7     10     11.4  -4.43   0.000498   8.31 0.0000709       -0.534 
-##  7 7                 6     13     13.8  -7.77   0.000418   8.30 0.000183        -0.936 
-##  8 8                 6     13     13.8  -7.77   0.000418   8.30 0.000183        -0.936 
-##  9 9                15     15     15.3  -0.333  0.000377   8.31 0.000000304     -0.0401
-## 10 10                9      7      9.09 -0.0870 0.000601   8.31 0.0000000330    -0.0105
-## # … with 3,125 more rows
-```
-
-
-```
-## # A tibble: 3,135 x 9
-##    .rownames Height_in Width_in .fitted  .resid     .hat .sigma      .cooksd .std.resid
-##    &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;        &lt;dbl&gt;      &lt;dbl&gt;
-##  1 1                37     29.5   26.7  10.3    0.000399   8.30 0.000310         1.25  
-##  2 2                18     14     14.6   3.45   0.000396   8.31 0.0000342        0.415 
-##  3 3                13     16     16.1  -3.11   0.000361   8.31 0.0000254       -0.375 
-##  4 4                14     18     17.7  -3.68   0.000337   8.31 0.0000330       -0.443 
-##  5 5                14     18     17.7  -3.68   0.000337   8.31 0.0000330       -0.443 
-##  6 6                 7     10     11.4  -4.43   0.000498   8.31 0.0000709       -0.534 
-##  7 7                 6     13     13.8  -7.77   0.000418   8.30 0.000183        -0.936 
-##  8 8                 6     13     13.8  -7.77   0.000418   8.30 0.000183        -0.936 
-##  9 9                15     15     15.3  -0.333  0.000377   8.31 0.000000304     -0.0401
-## 10 10                9      7      9.09 -0.0870 0.000601   8.31 0.0000000330    -0.0105
-## # … with 3,125 more rows
-```
 
 ---
 
-## Comparison: glance() uses the same syntax
+## Comparison: `augment()`
+
+**They're not exactly the same!**
 
 .pull-left[
+Base R fit + `glance()`:
+
 .small[
-Base R model + glance():
 
 ```r
-glance(base_r_ht_wt)$r.squared
+base_lm_aug &lt;- augment(base_lm)
+base_lm_aug
 ```
 
 ```
-## [1] 0.6829468
+## # A tibble: 3,135 x 9
+##   .rownames Height_in Width_in .fitted .resid     .hat
+##   &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+## 1 1                37     29.5    26.7  10.3  0.000399
+## 2 2                18     14      14.6   3.45 0.000396
+## 3 3                13     16      16.1  -3.11 0.000361
+## 4 4                14     18      17.7  -3.68 0.000337
+## 5 5                14     18      17.7  -3.68 0.000337
+## 6 6                 7     10      11.4  -4.43 0.000498
+## # … with 3,129 more rows, and 3 more variables:
+## #   .sigma &lt;dbl&gt;, .cooksd &lt;dbl&gt;, .std.resid &lt;dbl&gt;
 ```
 ]]
 
 .pull-right[
+Tidymodels fit + `augment()`:
+
 .small[
-tidymodels model + glance():
 
 ```r
-glance(tidy_ht_wt)$r.squared
+tidy_lm_aug &lt;- augment(tidy_lm$fit)
+tidy_lm_aug
 ```
 
 ```
-## [1] 0.6829468
+## # A tibble: 3,135 x 9
+##   .rownames Height_in Width_in .fitted .resid     .hat
+##   &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+## 1 1                37     29.5    26.7  10.3  0.000399
+## 2 2                18     14      14.6   3.45 0.000396
+## 3 3                13     16      16.1  -3.11 0.000361
+## 4 4                14     18      17.7  -3.68 0.000337
+## 5 5                14     18      17.7  -3.68 0.000337
+## 6 6                 7     10      11.4  -4.43 0.000498
+## # … with 3,129 more rows, and 3 more variables:
+## #   .sigma &lt;dbl&gt;, .cooksd &lt;dbl&gt;, .std.resid &lt;dbl&gt;
 ```
 ]]
 

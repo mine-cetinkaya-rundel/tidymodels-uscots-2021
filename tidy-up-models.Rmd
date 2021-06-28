@@ -1,8 +1,8 @@
 ---
-title: "Welcome!"
-subtitle: "<br><br> Tidy up your models"
-author: "[datasciencebox.org](https://datasciencebox.org/)"
-date: "Mine Çetinkaya-Rundel and Debbie Yuster"
+title: "Tidy up your models"
+subtitle: "<br>🔗 [bit.ly/tidymodels-uscots21](https://bit.ly/tidymodels-uscots21/)"
+author: "<br>Mine Çetinkaya-Rundel and Debbie Yuster"
+date: "USCOTS 2021"
 output:
   xaringan::moon_reader:
     css: ["xaringan-themer.css", "slides.css"]
@@ -15,6 +15,8 @@ output:
 ---
 
 ```{r setup, include = FALSE}
+options(dplyr.print_min = 6, dplyr.print_max = 6)
+
 knitr::opts_chunk$set(
   fig.width = 8, 
   fig.asp = 0.618,
@@ -27,13 +29,35 @@ ggplot2::theme_set(ggplot2::theme_minimal(base_size = 16))
 
 library(xaringanExtra)
 xaringanExtra::use_panelset()
+
+# output number of lines
+hook_output <- knitr::knit_hooks$get("output")
+knitr::knit_hooks$set(output = function(x, options) {
+  lines <- options$output.lines
+  if (is.null(lines)) {
+    return(hook_output(x, options))  # pass to default hook
+  }
+  x <- unlist(strsplit(x, "\n"))
+  more <- "..."
+  if (length(lines)==1) {        # first n lines
+    if (length(x) > lines) {
+      # truncate the output, but add ....
+      x <- c(head(x, lines), more)
+    }
+  } else {
+    x <- c(more, x[lines], more)
+  }
+  # paste these lines together
+  x <- paste(c(x, ""), collapse = "\n")
+  hook_output(x, options)
+})
 ```
 
 layout: true
   
 <div class="my-footer">
 <span>
-<a href="https://datasciencebox.org" target="_blank">INSERT LINK</a>
+<a href="https://bit.ly/tidymodels-uscots21" target="_blank">bit.ly/tidymodels-uscots21</a>
 </span>
 </div> 
 
@@ -52,6 +76,12 @@ library(tidymodels)
 - Useful links
 
 TO DO: Need to update hex for logo for workshop...
+
+---
+
+```{r out.width="98%", echo=FALSE}
+knitr::include_graphics("images/tidymodels.png")
+```
 
 ---
 
@@ -90,7 +120,7 @@ PhD students in the Duke Art, Law, and Markets Initiative in 2013
 
 ## Depart pour la chasse
 
-```{r out.width="75%", echo=FALSE}
+```{r out.width="65%", echo=FALSE}
 knitr::include_graphics("images/depart-pour-la-chasse.png")
 ```
 
@@ -99,7 +129,7 @@ knitr::include_graphics("images/depart-pour-la-chasse.png")
 ## Auction catalog text
 
 .pull-left[
-```{r out.width="70%", echo=FALSE}
+```{r out.width="65%", echo=FALSE}
 knitr::include_graphics("images/auction-catalogue.png")
 ```
 ]
@@ -111,7 +141,7 @@ Two paintings very rich in composition, of a beautiful execution, and whose meri
 
 ---
 
-```{r out.width="80%", echo=FALSE}
+```{r out.width = "65%", echo=FALSE}
 knitr::include_graphics("images/painting1.png")
 knitr::include_graphics("images/painting2.png")
 knitr::include_graphics("images/painting3.png")
@@ -119,36 +149,69 @@ knitr::include_graphics("images/painting3.png")
 
 ---
 
-## Linear regression with the Paris Paintings dataset
+## Minor detail: load data
 
-```{r load-pp, message=FALSE}
-pp <- read_csv(
-  "data/paris-paintings.csv", 
-  na = c("n/a", "", "NA")
-  )
+```{r load-pp, message = FALSE, output.lines = 15}
+pp <- read_csv("data/paris-paintings.csv", na = c("n/a", "", "NA"))
+pp
+```
+
+---
+
+## Linear regression, two ways
+
+- **Goal:** Predict height of painting (`Height_in`) from width (`Width_in`)
+
+- **Approach:**
+  1. Using base R
+  2. Using tidymodels
+
+---
+
+## Approach 1. Base R
+
+- Fit:
+
+```{r}
+base_lm <- lm(Height_in ~ Width_in, data = pp)
 ```
 
 --
 
-### Predicting height from width: Base R syntax
+- Summarise:
 
+```{r, output.lines = 9:15}
+summary(base_lm)
+```
+
+---
+
+## Approach 2. Tidymodels
+
+- Fit:
 
 ```{r}
-base_r_ht_wt <- lm(Height_in ~ Width_in, data = pp)
-tidy(base_r_ht_wt)
+tidy_lm <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(Height_in ~ Width_in, data = pp)
 ```
 
+--
 
-$$\widehat{Height_{in}} = 3.62 + 0.78~Width_{in}$$
----
+- Summarise:
 
-```{r out.width="98%", echo=FALSE}
-knitr::include_graphics("images/tidymodels.png")
+```{r}
+tidy(tidy_lm)
 ```
 
 ---
 
-# Rewind and redo, with tidymodels
+class: middle
+
+.hand[Let's rewind and redo, step-by-step, with tidymodels]
+
+---
+
 ## Step 1: Specify model
 
 ```{r}
@@ -178,56 +241,71 @@ linear_reg() %>%
 
 ---
 
-## A closer look at model output
+## Step 4: Summarise model output
 
-```{r ref.label="fit-model", echo=FALSE}
+```{r summarise-model}
+linear_reg() %>%
+  set_engine("lm") %>%
+  fit(Height_in ~ Width_in, data = pp) %>%
+  tidy()
 ```
-
-.large[
-$$\widehat{Height\_{in}} = 3.6214 + 0.7808 \times Width\_{in}$$
-]
 
 ---
 
-## A tidy look at model output
+## Linear regression, two ways
 
+### Side-by-side comparison
+
+.pull-left[
+Base R:
+
+.small[
+```{r}
+lm(Height_in ~ Width_in, data = pp) %>%
+  summary()
+```
+]]
+
+.pull-right[
+Tidymodels:
+
+.small[
 ```{r}
 linear_reg() %>%
   set_engine("lm") %>%
   fit(Height_in ~ Width_in, data = pp) %>%
   tidy()
 ```
-
-.large[
-$$\widehat{height\_{in}} = 3.62 + 0.781 \times width\_{in}$$
-]
+]]
 
 ---
 
-## Side-by-side comparison: Fitting the linear model
+## A note on summarising model output
+
+- Models fit with base R can be summarised with `tidy()` as well
+- So you don't have to use the full tidymodels pipeline to benefit from the *tidy* output
 
 .pull-left[
-.midi[
 Base R:
-```{r lm-syntax, eval = FALSE}
+
+.small[
+```{r}
 lm(Height_in ~ Width_in, data = pp) %>%
   tidy()
 ```
 ]]
 
 .pull-right[
-.midi[
-tidymodels:
-```{r, eval = FALSE}
+Tidymodels:
+
+.small[
+```{r}
 linear_reg() %>%
   set_engine("lm") %>%
   fit(Height_in ~ Width_in, data = pp) %>%
   tidy()
 ```
 ]]
-
-```{r lm-syntax, echo = FALSE, eval = TRUE}
-```
 
 ---
 
@@ -236,58 +314,60 @@ linear_reg() %>%
 Achieved with functions from the `broom` package:
 
 - `tidy`: Constructs a data frame that summarizes the model's statistical findings: coefficient estimates, *standard errors, test statistics, p-values*.
+
 - `glance`: Constructs a concise one-row summary of the model. This typically contains values such as $R^2$, adjusted $R^2$, *and residual standard errors that are computed once for the entire model*.
+
 - `augment`: Adds columns to the original data that was modeled. This includes predictions and residuals.
 
 ---
 
-## Side-by-side comparison: Using augment()
+## Comparison: `glance()`
+
+**They're the same!**
 
 .pull-left[
+Base R fit + `glance()`:
+
 .small[
-Base R model + augment():
-```{r aug-syntax, eval = FALSE}
-base_r_ht_wt <- lm(Height_in ~ Width_in, data = pp)
-base_r_ht_wt_aug <- augment(base_r_ht_wt)
-base_r_ht_wt_aug
+```{r glance-base}
+glance(base_lm)
+glance(base_lm)$r.squared
 ```
 ]]
 
 .pull-right[
+Tidymodels fit + `glance()`:
+
 .small[
-tidymodels model + augment():
-```{r tidy-aug, eval = FALSE}
-tidy_ht_wt <- linear_reg() %>%
-  set_engine("lm") %>%
-  fit(Height_in ~ Width_in, data = pp)
-tidy_ht_wt_aug <- augment(tidy_ht_wt$fit)
-tidy_ht_wt_aug
+```{r glance-tidy}
+glance(tidy_lm)
+glance(tidy_lm)$r.squared
 ```
 ]]
-
-```{r aug-syntax, echo = FALSE, eval = TRUE}
-```
-
-```{r tidy-aug, echo = FALSE, eval = TRUE}
-```
 
 ---
 
-## Comparison: glance() uses the same syntax
+## Comparison: `augment()`
+
+**They're not exactly the same!**
 
 .pull-left[
+Base R fit + `glance()`:
+
 .small[
-Base R model + glance():
-```{r glance-syntax, eval = TRUE}
-glance(base_r_ht_wt)$r.squared
+```{r augment-base}
+base_lm_aug <- augment(base_lm)
+base_lm_aug
 ```
 ]]
 
 .pull-right[
+Tidymodels fit + `augment()`:
+
 .small[
-tidymodels model + glance():
-```{r, eval = TRUE}
-glance(tidy_ht_wt)$r.squared
+```{r augment-tidy}
+tidy_lm_aug <- augment(tidy_lm$fit)
+tidy_lm_aug
 ```
 ]]
 
