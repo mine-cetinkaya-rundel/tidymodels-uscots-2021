@@ -178,10 +178,12 @@ class: middle
 - Source: Printed catalogs of 28 auction sales in Paris, 1764 - 1780
 - 3,393 paintings, their prices, and descriptive details from sales catalogs - over 60 variables
 
+.small[
 ```{r load-pp, message = FALSE, output.lines = 12}
 pp <- read_csv("data/paris-paintings.csv", na = c("n/a", "", "NA"))
 pp
 ```
+]
 
 ---
 
@@ -400,7 +402,7 @@ Achieved with functions from the `broom` package:
 .pull-left[
 Base R fit + `glance()`:
 
-.small[
+.xsmall[
 ```{r glance-base}
 glance(base_lm)
 glance(base_lm)$r.squared
@@ -410,7 +412,7 @@ glance(base_lm)$r.squared
 .pull-right[
 Tidymodels fit + `glance()`:
 
-.small[
+.xsmall[
 ```{r glance-tidy}
 glance(tidy_lm)
 glance(tidy_lm)$r.squared
@@ -424,7 +426,7 @@ glance(tidy_lm)$r.squared
 **They're not exactly the same!**
 
 .pull-left[
-Base R fit + `glance()`:
+Base R fit + `augment()`:
 
 .small[
 ```{r augment-base}

@@ -136,6 +136,7 @@ class: middle
 - Source: Printed catalogs of 28 auction sales in Paris, 1764 - 1780
 - 3,393 paintings, their prices, and descriptive details from sales catalogs - over 60 variables
 
+.small[
 
 ```r
 pp &lt;- read_csv("data/paris-paintings.csv", na = c("n/a", "", "NA"))
@@ -157,6 +158,7 @@ pp
 ## #   Height_in &lt;dbl&gt;, Width_in &lt;dbl&gt;, Surface_Rect &lt;dbl&gt;, Diam_in &lt;dbl&gt;, Surface_Rnd &lt;dbl&gt;, Shape &lt;chr&gt;, Surface &lt;dbl&gt;,
 ...
 ```
+]
 
 ---
 
@@ -366,7 +368,7 @@ linear_reg() %&gt;%
 ```
 ## parsnip model object
 ## 
-## Fit time:  2ms 
+## Fit time:  1ms 
 ## 
 ## Call:
 ## stats::lm(formula = Height_in ~ Width_in, data = data)
@@ -524,7 +526,7 @@ Achieved with functions from the `broom` package:
 .pull-left[
 Base R fit + `glance()`:
 
-.small[
+.xsmall[
 
 ```r
 glance(base_lm)
@@ -549,7 +551,7 @@ glance(base_lm)$r.squared
 .pull-right[
 Tidymodels fit + `glance()`:
 
-.small[
+.xsmall[
 
 ```r
 glance(tidy_lm)
@@ -578,7 +580,7 @@ glance(tidy_lm)$r.squared
 **They're not exactly the same!**
 
 .pull-left[
-Base R fit + `glance()`:
+Base R fit + `augment()`:
 
 .small[
 
