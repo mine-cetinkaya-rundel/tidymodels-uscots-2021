@@ -645,11 +645,11 @@ class: middle
 
 ## Data: Book weight and volume
 
-The `allbacks` data frame gives measurements on the volume and weight of 15 books, some of which are paperback and some of which are hardback
+The `allbacks` data frame gives measurements on the volume and weight of 15 books, some of which are paperback and some of which are hardback (a.k.a. hardcover)
 
 .pull-left[
-- Volume - cubic centimetres
-- Area - square centimetres
+- Volume - cubic centimeters
+- Area - square centimeters
 - Weight - grams
 ]
 .pull-right[
